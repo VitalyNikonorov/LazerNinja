@@ -1,7 +1,10 @@
-package net.nikonorov.lazerninja.logic.api
+package net.nikonorov.lazerninja.logic
 
 import android.content.Context
 import android.content.Loader
+import net.nikonorov.lazerninja.logic.api.AuthRequest
+import net.nikonorov.lazerninja.logic.api.TextResponse
+import net.nikonorov.lazerninja.logic.api.SignAPI
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -12,11 +15,11 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by vitaly on 27.02.16.
  */
 
-class LoaderAuth: Loader<AuthToken>{
+class LoaderAuth: Loader<TextResponse> {
 
     private var retrofit : Retrofit
     private val authObject: AuthRequest
-    private var data: AuthToken? = null
+    private var data: TextResponse? = null
 
     constructor(context: Context, authRequest: AuthRequest): super(context){
 
@@ -28,14 +31,14 @@ class LoaderAuth: Loader<AuthToken>{
         this.authObject = authRequest
     }
 
-    override fun deliverResult(token: AuthToken) {
+    override fun deliverResult(token: TextResponse) {
         data = token
         super.deliverResult(data)
     }
 
     override fun onStartLoading(){
         if(data != null){
-            deliverResult(data as AuthToken)
+            deliverResult(data as TextResponse)
         }else{
             forceLoad()
         }
@@ -45,16 +48,16 @@ class LoaderAuth: Loader<AuthToken>{
 
         val signApi = retrofit.create(SignAPI::class.java)
 
-        val call: Call<AuthToken> = signApi.auth(authObject)
+        val call: Call<TextResponse> = signApi.auth(authObject)
 
-        call.enqueue(object : Callback<AuthToken> {
-            override fun onResponse(p0: Call<AuthToken>?, response: Response<AuthToken>?) {
+        call.enqueue(object : Callback<TextResponse> {
+            override fun onResponse(p0: Call<TextResponse>?, response: Response<TextResponse>?) {
                 if(response != null) {
                     deliverResult(response.body())
                 }
             }
 
-            override fun onFailure(p0: Call<AuthToken>?, p1: Throwable?) {
+            override fun onFailure(p0: Call<TextResponse>?, p1: Throwable?) {
                 throw UnsupportedOperationException()
             }
 

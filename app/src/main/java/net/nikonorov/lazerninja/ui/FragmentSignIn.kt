@@ -12,14 +12,14 @@ import android.widget.Toast
 import net.nikonorov.lazerninja.FragmentSet
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.logic.api.AuthRequest
-import net.nikonorov.lazerninja.logic.api.AuthToken
-import net.nikonorov.lazerninja.logic.api.LoaderAuth
+import net.nikonorov.lazerninja.logic.api.TextResponse
+import net.nikonorov.lazerninja.logic.LoaderAuth
 
 /**
  * Created by vitaly on 27.02.16.
  */
 
-class FragmentSignIn : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
+class FragmentSignIn : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
 
     val LOADER_ID = 2
 
@@ -57,7 +57,7 @@ class FragmentSignIn : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
         return view
     }
 
-    override fun onCreateLoader(id: Int, bundle: Bundle): Loader<AuthToken>? {
+    override fun onCreateLoader(id: Int, bundle: Bundle): Loader<TextResponse>? {
         when(id){
             LOADER_ID -> {
                 val authBody = AuthRequest(bundle.getString("username"), bundle.getString("password"))
@@ -67,11 +67,11 @@ class FragmentSignIn : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
         }
     }
 
-    override fun onLoaderReset(p0: Loader<AuthToken>?) {
+    override fun onLoaderReset(p0: Loader<TextResponse>?) {
         //throw UnsupportedOperationException()
     }
 
-    override fun onLoadFinished(p0: Loader<AuthToken>?, token: AuthToken?) {
+    override fun onLoadFinished(p0: Loader<TextResponse>?, token: TextResponse?) {
         Toast.makeText(activity, token?.key, Toast.LENGTH_SHORT).show()
     }
 }

@@ -12,13 +12,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login"
+            android:text="@string/email"
             android:gravity="center"
             android:textColor="@color/colorWhite"
             android:layout_centerVertical="true"/>
 
         <EditText
-            android:id="@+id/sign_login_et"
+            android:id="@+id/sign_login_recover_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"

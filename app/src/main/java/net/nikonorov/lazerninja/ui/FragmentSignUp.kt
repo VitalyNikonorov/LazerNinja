@@ -11,14 +11,14 @@ import android.widget.EditText
 import android.widget.Toast
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.logic.LoaderReg
-import net.nikonorov.lazerninja.logic.api.AuthToken
+import net.nikonorov.lazerninja.logic.api.TextResponse
 import net.nikonorov.lazerninja.logic.api.RegRequest
 
 /**
  * Created by vitaly on 27.02.16.
  */
 
-class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
+class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
 
     val LOADER_ID = 1
 
@@ -59,7 +59,7 @@ class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
     }
 
 
-    override fun onCreateLoader(id: Int, args: Bundle): Loader<AuthToken>? {
+    override fun onCreateLoader(id: Int, args: Bundle): Loader<TextResponse>? {
 
         when(id){
 
@@ -79,11 +79,11 @@ class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
 
     }
 
-    override fun onLoaderReset(p0: Loader<AuthToken>?) {
+    override fun onLoaderReset(p0: Loader<TextResponse>?) {
         //throw UnsupportedOperationException()
     }
 
-    override fun onLoadFinished(p0: Loader<AuthToken>?, token: AuthToken?) {
+    override fun onLoadFinished(p0: Loader<TextResponse>?, token: TextResponse?) {
         Toast.makeText(activity, token?.key, Toast.LENGTH_SHORT).show()
     }
 

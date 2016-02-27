@@ -13,10 +13,14 @@ interface SignAPI {
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/")
-    fun registrate(@Body body: RegRequest): Call<AuthToken>
+    fun registrate(@Body body: RegRequest): Call<TextResponse>
 
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/login/")
-    fun auth(@Body body: AuthRequest): Call<AuthToken>
+    fun auth(@Body body: AuthRequest): Call<TextResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("users/auth/password/reset/")
+    fun resetPass(@Body body: RecoveryRequest): Call<TextResponse>
 }
