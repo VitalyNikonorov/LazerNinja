@@ -15,4 +15,8 @@ interface SignAPI {
     @POST("users/auth/")
     fun registrate(@Body body: RegRequest): Call<AuthToken>
 
+
+    @Headers("Content-Type: application/json")
+    @POST("users/auth/login/")
+    fun auth(@Body body: AuthRequest): Call<AuthToken>
 }

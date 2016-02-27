@@ -43,9 +43,6 @@ class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<AuthToken> {
             val pass = passET.text.toString()
             val confirmPass = confirmPassET.text.toString()
 
-            val regBody = RegRequest(username = login, email = email, first_name = firstName, last_name = lastName, password1 = pass, password2 = confirmPass)
-
-
             val bundle = Bundle()
             bundle.putString("username", login)
             bundle.putString("email", email)
