@@ -54,7 +54,7 @@ class LoaderRecovery: Loader<TextResponse>{
         call.enqueue(object : Callback<TextResponse> {
             override fun onResponse(p0: Call<TextResponse>?, response: Response<TextResponse>?) {
                 if(response != null) {
-                    val error = response.errorBody().string()
+                    val error = response.errorBody().string() //TODO
                     deliverResult(response.body())
                 }
             }

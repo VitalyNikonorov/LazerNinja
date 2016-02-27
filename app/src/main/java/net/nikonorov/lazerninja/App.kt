@@ -10,4 +10,6 @@ class App : Application() {
     companion object {
         var isActive = false
     }
+
+    var profile: UserProfile? = null
 }

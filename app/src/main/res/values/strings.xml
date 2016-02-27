@@ -1,12 +1,13 @@
 <resources>
-<string name="app_name">Lazer ninja</string>
-<string name="login">login:</string>
-<string name="email">email:</string>
-<string name="first_name">first name:</string>
-<string name="last_name">last name:</string>
-<string name="pass">password:</string>
-<string name="confirm_pass">confirm password:</string>
-<string name="signin">SignIn</string>
-<string name="signup">SignUp</string>
-<string name="recover">Recover Pass</string>
+    <string name="app_name">Lazer ninja</string>
+    <string name="login">login:</string>
+    <string name="email">email:</string>
+    <string name="first_name">first name:</string>
+    <string name="last_name">last name:</string>
+    <string name="pass">password:</string>
+    <string name="confirm_pass">confirm password:</string>
+    <string name="signin">SignIn</string>
+    <string name="signup">SignUp</string>
+    <string name="recover">Recover Pass</string>
+    <string name="username">username:</string>
 </resources>

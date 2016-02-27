@@ -9,4 +9,12 @@
         android:layout_height="wrap_content"
         android:text="auth"
         android:id="@+id/auth_btn"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="profile"
+        android:id="@+id/profile_btn"
+        android:layout_below="@+id/auth_btn"/>
+
 </RelativeLayout>
