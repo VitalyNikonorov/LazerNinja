@@ -1,15 +1,14 @@
 package net.nikonorov.lazerninja.logic.api
 
+import net.nikonorov.lazerninja.UserProfile
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.http.*
 
 /**
  * Created by vitaly on 27.02.16.
  */
 
-interface SignAPI {
+interface UserAPI {
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/")
@@ -23,4 +22,7 @@ interface SignAPI {
     @Headers("Content-Type: application/json")
     @POST("users/auth/password/reset/")
     fun resetPass(@Body body: RecoveryRequest): Call<TextResponse>
+
+    @GET("users/")
+    fun getInfo(@Header("Authorization") token : String): Call<UserProfile>
 }

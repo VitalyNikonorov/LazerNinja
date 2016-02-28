@@ -3,7 +3,7 @@ package net.nikonorov.lazerninja.logic
 import android.content.Context
 import android.content.Loader
 import net.nikonorov.lazerninja.logic.api.RecoveryRequest
-import net.nikonorov.lazerninja.logic.api.SignAPI
+import net.nikonorov.lazerninja.logic.api.UserAPI
 import net.nikonorov.lazerninja.logic.api.TextResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,7 +47,7 @@ class LoaderRecovery: Loader<TextResponse>{
 
     override fun onForceLoad() {
 
-        val signApi = retrofit.create(SignAPI::class.java)
+        val signApi = retrofit.create(UserAPI::class.java)
 
         val call: Call<TextResponse> = signApi.resetPass(recoveryObject)
 

@@ -26,6 +26,9 @@
         <activity android:name=".ui.ActivitySign" android:theme="@style/Sign"
             android:configChanges="orientation|screenSize"/>
 
+        <activity android:name=".ui.ActivityUserProfile"
+            android:configChanges="orientation|screenSize"/>
+
     </application>
 
 </manifest>

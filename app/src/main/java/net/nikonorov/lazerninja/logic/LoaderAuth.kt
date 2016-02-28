@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Loader
 import net.nikonorov.lazerninja.logic.api.AuthRequest
 import net.nikonorov.lazerninja.logic.api.TextResponse
-import net.nikonorov.lazerninja.logic.api.SignAPI
+import net.nikonorov.lazerninja.logic.api.UserAPI
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,7 +46,7 @@ class LoaderAuth: Loader<TextResponse> {
 
     override fun onForceLoad() {
 
-        val signApi = retrofit.create(SignAPI::class.java)
+        val signApi = retrofit.create(UserAPI::class.java)
 
         val call: Call<TextResponse> = signApi.auth(authObject)
 

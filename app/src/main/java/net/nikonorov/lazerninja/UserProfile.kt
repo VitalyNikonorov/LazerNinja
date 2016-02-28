@@ -4,9 +4,12 @@ package net.nikonorov.lazerninja
  * Created by vitaly on 28.02.16.
  */
 
-class UserProfile(private val username: String,
-                 private val email: String,
-                 private val first_name: String,
-                 private val last_name: String,
-                 private val userpic: String){
+class UserProfile( val username: String,
+                  val email: String,
+                  val first_name: String,
+                  val last_name: String,
+                  val userpic: String){
+
+    constructor() : this("", "", "", "", "")
+
 }

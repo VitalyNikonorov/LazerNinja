@@ -9,7 +9,7 @@ import android.app.Application
 class App : Application() {
     companion object {
         var isActive = false
+        var token: String = ""
+        var profile: UserProfile = UserProfile()
     }
-
-    var profile: UserProfile? = null
 }
