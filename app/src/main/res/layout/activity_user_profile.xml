@@ -56,4 +56,12 @@
         android:layout_toRightOf="@+id/last_name_caption"
         android:layout_below="@+id/first_name_caption"/>
 
+    <Button
+        android:id="@+id/logout_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/last_name_caption"
+        android:text="@string/logout"
+        />
+
 </RelativeLayout>

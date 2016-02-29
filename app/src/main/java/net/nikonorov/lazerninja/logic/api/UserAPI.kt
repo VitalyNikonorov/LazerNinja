@@ -24,5 +24,8 @@ interface UserAPI {
     fun resetPass(@Body body: RecoveryRequest): Call<SuccessResponse>
 
     @GET("users/")
-    fun getInfo(@Header("Authorization") token : String): Call<UserProfile>
+    fun getInfo(@Header("Authorization") token : String) : Call<UserProfile>
+
+    @POST("users/auth/logout/")
+    fun logout(@Header("Authorization") token : String) : Call<SuccessResponse>
 }
