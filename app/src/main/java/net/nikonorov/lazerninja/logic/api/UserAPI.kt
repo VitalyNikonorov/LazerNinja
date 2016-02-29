@@ -12,20 +12,24 @@ interface UserAPI {
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/")
-    fun registrate(@Body body: RegRequest): Call<TextResponse>
+    fun registrate(@Body body : RegRequest) : Call<TextResponse>
 
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/login/")
-    fun auth(@Body body: AuthRequest): Call<TextResponse>
+    fun auth(@Body body : AuthRequest) : Call<TextResponse>
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/password/reset/")
-    fun resetPass(@Body body: RecoveryRequest): Call<SuccessResponse>
+    fun resetPass(@Body body : RecoveryRequest) : Call<SuccessResponse>
 
     @GET("users/")
     fun getInfo(@Header("Authorization") token : String) : Call<UserProfile>
 
     @POST("users/auth/logout/")
     fun logout(@Header("Authorization") token : String) : Call<SuccessResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("users/auth/password/change/")
+    fun changePass(@Header("Authorization") token : String, @Body body : ChangePassRequest) : Call<SuccessResponse>
 }

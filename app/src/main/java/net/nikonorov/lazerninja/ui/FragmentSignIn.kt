@@ -62,7 +62,7 @@ class FragmentSignIn : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
         when(id){
             LOADER_ID -> {
                 val authBody = AuthRequest(bundle.getString("username"), bundle.getString("password"))
-            return LoaderAuth(activity, authBody)
+                return LoaderAuth(activity, authBody)
             }
             else -> return null
         }

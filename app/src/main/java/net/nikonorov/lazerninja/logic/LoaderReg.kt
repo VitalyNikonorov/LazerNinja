@@ -18,8 +18,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class LoaderReg : Loader<TextResponse> {
 
     private var retrofit : Retrofit
-    private val regObject: RegRequest
-    private var data: TextResponse? = null
+    private val regObject : RegRequest
+    private var data : TextResponse? = null
 
 
     constructor(context: Context, regRequest: RegRequest) : super(context){

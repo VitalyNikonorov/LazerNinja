@@ -64,4 +64,25 @@
         android:text="@string/logout"
         />
 
+    <EditText
+        android:id="@+id/new_pass_1"
+        android:layout_below="@+id/logout_btn"
+        android:hint="new pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/new_pass_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="confirm new pass"
+        android:layout_below="@+id/new_pass_1"/>
+
+    <Button
+        android:id="@+id/change_pass_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="changsepass"
+        android:layout_below="@+id/new_pass_2"/>
+
 </RelativeLayout>
