@@ -21,7 +21,7 @@ interface UserAPI {
 
     @Headers("Content-Type: application/json")
     @POST("users/auth/password/reset/")
-    fun resetPass(@Body body: RecoveryRequest): Call<TextResponse>
+    fun resetPass(@Body body: RecoveryRequest): Call<SuccessResponse>
 
     @GET("users/")
     fun getInfo(@Header("Authorization") token : String): Call<UserProfile>

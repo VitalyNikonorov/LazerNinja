@@ -10,17 +10,15 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import net.nikonorov.lazerninja.R
-import net.nikonorov.lazerninja.logic.LoaderAuth
 import net.nikonorov.lazerninja.logic.LoaderRecovery
-import net.nikonorov.lazerninja.logic.api.AuthRequest
 import net.nikonorov.lazerninja.logic.api.RecoveryRequest
-import net.nikonorov.lazerninja.logic.api.TextResponse
+import net.nikonorov.lazerninja.logic.api.SuccessResponse
 
 /**
  * Created by vitaly on 27.02.16.
  */
 
-class FragmentSignRecovery : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
+class FragmentSignRecovery : Fragment(), LoaderManager.LoaderCallbacks<SuccessResponse> {
 
     val LOADER_ID = 3
 
@@ -48,7 +46,7 @@ class FragmentSignRecovery : Fragment(), LoaderManager.LoaderCallbacks<TextRespo
         return view
     }
 
-    override fun onCreateLoader(id: Int, bundle: Bundle): Loader<TextResponse>? {
+    override fun onCreateLoader(id: Int, bundle: Bundle): Loader<SuccessResponse>? {
         when(id){
             LOADER_ID -> {
                 val recoveryRequest = RecoveryRequest(bundle.getString("email"))
@@ -58,12 +56,12 @@ class FragmentSignRecovery : Fragment(), LoaderManager.LoaderCallbacks<TextRespo
         }
     }
 
-    override fun onLoaderReset(p0: Loader<TextResponse>?) {
+    override fun onLoaderReset(p0: Loader<SuccessResponse>?) {
         //throw UnsupportedOperationException()
     }
 
-    override fun onLoadFinished(p0: Loader<TextResponse>?, response: TextResponse?) {
-        Toast.makeText(activity, response?.key, Toast.LENGTH_SHORT).show()
+    override fun onLoadFinished(p0: Loader<SuccessResponse>?, response: SuccessResponse?) {
+        Toast.makeText(activity, response?.success, Toast.LENGTH_SHORT).show()
     }
 
 }

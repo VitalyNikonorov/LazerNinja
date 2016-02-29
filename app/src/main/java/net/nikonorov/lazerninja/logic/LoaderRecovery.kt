@@ -3,8 +3,8 @@ package net.nikonorov.lazerninja.logic
 import android.content.Context
 import android.content.Loader
 import net.nikonorov.lazerninja.logic.api.RecoveryRequest
+import net.nikonorov.lazerninja.logic.api.SuccessResponse
 import net.nikonorov.lazerninja.logic.api.UserAPI
-import net.nikonorov.lazerninja.logic.api.TextResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,11 +15,11 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by vitaly on 28.02.16.
  */
 
-class LoaderRecovery: Loader<TextResponse>{
+class LoaderRecovery: Loader<SuccessResponse>{
 
     private var retrofit : Retrofit
     private val recoveryObject: RecoveryRequest
-    private var data: TextResponse? = null
+    private var data: SuccessResponse? = null
 
     constructor(context: Context, request: RecoveryRequest) : super(context){
 
@@ -31,7 +31,7 @@ class LoaderRecovery: Loader<TextResponse>{
         this.recoveryObject = request
     }
 
-    override fun deliverResult(response: TextResponse) {
+    override fun deliverResult(response: SuccessResponse) {
         data = response
         super.deliverResult(data)
     }
@@ -39,7 +39,7 @@ class LoaderRecovery: Loader<TextResponse>{
 
     override fun onStartLoading(){
         if(data != null){
-            deliverResult(data as TextResponse)
+            deliverResult(data as SuccessResponse)
         }else{
             forceLoad()
         }
@@ -49,18 +49,18 @@ class LoaderRecovery: Loader<TextResponse>{
 
         val signApi = retrofit.create(UserAPI::class.java)
 
-        val call: Call<TextResponse> = signApi.resetPass(recoveryObject)
+        val call: Call<SuccessResponse> = signApi.resetPass(recoveryObject)
 
-        call.enqueue(object : Callback<TextResponse> {
-            override fun onResponse(p0: Call<TextResponse>?, response: Response<TextResponse>?) {
+        call.enqueue(object : Callback<SuccessResponse> {
+            override fun onResponse(p0: Call<SuccessResponse>?, response: Response<SuccessResponse>?) {
                 if(response != null) {
-                    val error = response.errorBody().string() //TODO
+                    //val error = response.errorBody().string() //TODO
                     deliverResult(response.body())
                 }
             }
 
-            override fun onFailure(p0: Call<TextResponse>?, p1: Throwable?) {
-                throw UnsupportedOperationException()
+            override fun onFailure(p0: Call<SuccessResponse>?, p1: Throwable?) {
+                //throw UnsupportedOperationException()
             }
 
         })

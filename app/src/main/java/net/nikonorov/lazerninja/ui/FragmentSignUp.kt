@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.logic.LoaderReg
 import net.nikonorov.lazerninja.logic.api.TextResponse
@@ -84,7 +85,12 @@ class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
     }
 
     override fun onLoadFinished(p0: Loader<TextResponse>?, token: TextResponse?) {
-        Toast.makeText(activity, token?.key, Toast.LENGTH_SHORT).show()
+        if(token != null) {
+            App.token = token.key
+            Toast.makeText(activity, token.key, Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(activity, "Error", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
