@@ -29,6 +29,9 @@
         <activity android:name=".ui.ActivityUserProfile"
             android:configChanges="orientation|screenSize"/>
 
+        <activity android:name=".ui.ActivitySaber"
+            android:configChanges="orientation|screenSize"/>
+
     </application>
 
 </manifest>

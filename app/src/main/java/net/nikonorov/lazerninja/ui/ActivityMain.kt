@@ -37,6 +37,12 @@ class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProf
             loaderManager.initLoader(LOADER_ID, null, this@ActivityMain)
         }
 
+        val gyroBtn = findViewById(R.id.gyro)
+
+        gyroBtn.setOnClickListener {
+            startActivity(Intent(this@ActivityMain, ActivitySaber::class.java))
+        }
+
     }
 
 
