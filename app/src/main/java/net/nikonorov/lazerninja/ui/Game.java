@@ -30,7 +30,6 @@ import com.google.vrtoolkit.cardboard.Viewport;
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
 
     private CardboardCamera cam;
-    private Model model;
     private ModelInstance[] troopers = new ModelInstance[4];
     private ModelInstance saber;
     private ModelInstance scene;
@@ -178,7 +177,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     @Override
     public void dispose() {
         batch.dispose();
-        model.dispose();
     }
 
     @Override
