@@ -18,6 +18,22 @@ class ActivitySaber: Activity(), SensorEventListener{
 
     var isWork = false
     var dataTV: TextView? = null
+    var lenearCoordTV: TextView? = null
+    var angleCoordTV: TextView? = null
+
+    val lenearCoords = doubleArrayOf(0.0, 0.0, 0.0)
+    val lenearVelosity = doubleArrayOf(0.0, 0.0, 0.0)
+    val angleCoords = doubleArrayOf(0.0, 0.0, 0.0)
+
+    val gravity = doubleArrayOf(0.0, 0.0, 0.0)
+    val linearAcceleration = doubleArrayOf(0.0, 0.0, 0.0)
+
+    var accelTime = 0L
+    var gyroTime = 0L
+
+    val X = 0
+    val Y = 1
+    val Z = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +42,8 @@ class ActivitySaber: Activity(), SensorEventListener{
 
         val saber = findViewById(R.id.saber)
         dataTV = findViewById(R.id.saber_tv) as TextView
+        lenearCoordTV = findViewById(R.id.linear_coord_tv) as TextView
+        angleCoordTV = findViewById(R.id.angle_coord_tv) as TextView
 
         val mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager;
 
@@ -33,8 +51,12 @@ class ActivitySaber: Activity(), SensorEventListener{
                 mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
                 SensorManager.SENSOR_DELAY_FASTEST);
 
+        mSensorManager.registerListener(this,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_FASTEST);
+
         saber.setOnClickListener {
-            isWork = true
+            isWork = !isWork
         }
 
 
@@ -42,13 +64,58 @@ class ActivitySaber: Activity(), SensorEventListener{
 
     override fun onSensorChanged(event: SensorEvent?) {
         if(isWork && event != null){
-            var axisX = event.values[0];
-            var axisY = event.values[1];
-            var axisZ = event.values[2];
 
-            if(dataTV != null){
-                (dataTV as TextView).text = "X: " + axisX.toString() + ", Y: " + axisY.toString() + ", Z: " + axisZ.toString();
+            when(event.sensor.type){
+                Sensor.TYPE_ACCELEROMETER -> {
+
+                    if(accelTime == 0L){
+                        accelTime = System.currentTimeMillis()
+                    }
+
+                    val deltaTime = (System.currentTimeMillis() - accelTime) / 1000.0
+
+
+                    val alpha = 0.8f;
+
+                    gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+                    gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+                    gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+                    linearAcceleration[0] = event.values[0] - gravity[0];
+                    linearAcceleration[1] = event.values[1] - gravity[1];
+                    linearAcceleration[2] = event.values[2] - gravity[2];
+
+
+                    lenearVelosity[X] += deltaTime * linearAcceleration[X]
+                    lenearVelosity[Y] += deltaTime * linearAcceleration[Y]
+                    lenearVelosity[Z] += deltaTime * linearAcceleration[Z]
+
+
+                    lenearCoords[X] += lenearVelosity[X] * deltaTime + linearAcceleration[X] * deltaTime * deltaTime / 2
+                    lenearCoords[Y] += lenearVelosity[Y] * deltaTime + linearAcceleration[Y] * deltaTime * deltaTime / 2
+                    lenearCoords[Z] += lenearVelosity[Z] * deltaTime + linearAcceleration[Z] * deltaTime * deltaTime / 2
+
+                    accelTime = System.currentTimeMillis()
+                }
+                Sensor.TYPE_GYROSCOPE -> {
+
+                    if(gyroTime == 0L){
+                        gyroTime = System.currentTimeMillis()
+                    }
+
+                    val deltaTime = (System.currentTimeMillis() - gyroTime) /1000.0
+
+                    angleCoords[X] += event.values[X] * deltaTime
+                    angleCoords[Y] += event.values[Y] * deltaTime
+                    angleCoords[Z] += event.values[Z] * deltaTime
+
+                    accelTime = System.currentTimeMillis()
+                }
             }
+
+            lenearCoordTV?.text = "Lenear coords: X: ${lenearCoords[X]}, Y: ${lenearCoords[Y]}, Z: ${lenearCoords[Z]}"
+            angleCoordTV?.text = "Angle coords: X: ${angleCoords[X]}, Y: ${angleCoords[Y]}, Z: ${angleCoords[Z]}"
+
         }
     }
 

@@ -43,6 +43,12 @@ class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProf
             startActivity(Intent(this@ActivityMain, ActivitySaber::class.java))
         }
 
+        val gameDtn = findViewById(R.id.game_btn)
+
+        gameDtn.setOnClickListener {
+            startActivity(Intent(this@ActivityMain, Game::class.java))
+        }
+
     }
 
 

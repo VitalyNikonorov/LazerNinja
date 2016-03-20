@@ -24,4 +24,11 @@
         android:text="gyro"
         android:layout_below="@+id/profile_btn"/>
 
+    <Button
+        android:id="@+id/game_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GAME"
+        android:layout_below="@+id/gyro"/>
+
 </RelativeLayout>

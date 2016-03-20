@@ -15,4 +15,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/saber"/>
 
+    <TextView
+        android:id="@+id/coord_caption"
+        android:text="Coordinates:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/saber_tv"/>
+    <TextView
+        android:id="@+id/linear_coord_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/coord_caption"/>
+    <TextView
+        android:id="@+id/angle_coord_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linear_coord_tv"/>
+
 </RelativeLayout>
