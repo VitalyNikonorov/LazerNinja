@@ -1,5 +1,6 @@
 package net.nikonorov.lazerninja.ui
 
+import android.app.Activity
 import android.app.LoaderManager
 import android.content.Intent
 import android.content.Loader
@@ -43,10 +44,16 @@ class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProf
             startActivity(Intent(this@ActivityMain, ActivitySaber::class.java))
         }
 
-        val gameDtn = findViewById(R.id.game_btn)
+        val gameBtn = findViewById(R.id.game_btn)
 
-        gameDtn.setOnClickListener {
+        gameBtn.setOnClickListener {
             startActivity(Intent(this@ActivityMain, Game::class.java))
+        }
+
+        val bluetoothBtn = findViewById(R.id.bluetooth_btn)
+
+        bluetoothBtn.setOnClickListener {
+            startActivity(Intent(this@ActivityMain, ActivityBluetooth::class.java))
         }
 
     }
