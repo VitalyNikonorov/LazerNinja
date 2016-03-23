@@ -1,27 +1,39 @@
 package net.nikonorov.lazerninja.ui
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import net.nikonorov.lazerninja.R
+import net.nikonorov.lazerninja.logic.BluetoothClient
+import net.nikonorov.lazerninja.logic.BluetoothServer
+import net.nikonorov.lazerninja.ui.adapters.RVAdapter
+import java.util.*
 
 /**
  * Created by vitaly on 21.03.16.
  */
 
-class ActivityBluetooth: AppCompatActivity() {
+class ActivityBluetooth : AppCompatActivity() {
 
     val REQUEST_ENABLE_BT = 1
-    var mReceiver : BroadcastReceiver? = null
-    val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
     var text: TextView? = null
+    var mBluetoothAdapter : BluetoothAdapter? = null
+    internal val REQUEST_CODE_LOCATION = 1
+    val devices = ArrayList<BluetoothDevice>()
+    var adapter : RVAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,38 +42,25 @@ class ActivityBluetooth: AppCompatActivity() {
 
         text = findViewById(R.id.bluetooth_info) as TextView
 
-        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (mBluetoothAdapter == null) {
             // Device does not support Bluetooth
         }
 
 
-        if (!mBluetoothAdapter.isEnabled) {
+        if (!mBluetoothAdapter!!.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
 
-        var mReceiver  = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val action = intent.action
-                // When discovery finds a device
-                if (BluetoothDevice.ACTION_FOUND == action) {
-                    // Get the BluetoothDevice object from the Intent
-                    val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                    // Add the name and address to an array adapter to show in a ListView
-                    text?.text = "name: ${device.name}, adress: ${device.address}"
-                }
-            }
-        }
-
-        val pairedDevices = mBluetoothAdapter.getBondedDevices()
-
-        if (pairedDevices.size > 0) {
-
-            for (device in pairedDevices) {
-                //text.text = "name: ${device.name}, adress: ${device.address}"
-            }
-        }
+//        val pairedDevices = mBluetoothAdapter?.getBondedDevices()
+//
+//        if (pairedDevices!!.size > 0) {
+//
+//            for (device in pairedDevices) {
+//                //text.text = "name: ${device.name}, adress: ${device.address}"
+//            }
+//        }
 
         val visibleBtn = findViewById(R.id.visible_btn)
 
@@ -73,18 +72,101 @@ class ActivityBluetooth: AppCompatActivity() {
 
         val discoverBtn = findViewById(R.id.discover_btn)
 
+        val filter = IntentFilter()
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+        filter.addAction(BluetoothDevice.ACTION_FOUND)
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+
+
         discoverBtn.setOnClickListener {
-            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+
+            val hasLocationPermission = ContextCompat.checkSelfPermission(this@ActivityBluetooth,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+
+            if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this@ActivityBluetooth,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    showMessageOKCancel("You need to allow access to LOCATION",
+                            DialogInterface.OnClickListener { dialog, which ->
+                                ActivityCompat.requestPermissions(this@ActivityBluetooth,
+                                        arrayOf(Manifest.permission.CAMERA),
+                                        REQUEST_CODE_LOCATION)
+                            })
+                }
+                    ActivityCompat.requestPermissions(this@ActivityBluetooth,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                            REQUEST_CODE_LOCATION)
+
+            }
+
+
+             // Don't forget to unregister during onDestroy
+            if (mBluetoothAdapter!!.startDiscovery()){
+                Toast.makeText(this@ActivityBluetooth, "OK", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this@ActivityBluetooth, "Error", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        if (mBluetoothAdapter.startDiscovery()){
-            Toast.makeText(this@ActivityBluetooth, "OK", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(this@ActivityBluetooth, "Error", Toast.LENGTH_SHORT).show()
+        registerReceiver(mReceiver, filter)
+
+        val hostBtn = findViewById(R.id.host_btn)
+        hostBtn.setOnClickListener {
+            val host = BluetoothServer(mBluetoothAdapter as BluetoothAdapter, this@ActivityBluetooth)
+            host.acceptThread()
+            host.start()
         }
 
+        val joinBtn = findViewById(R.id.join_btn)
+
+        val rv = findViewById(R.id.devices_list) as RecyclerView
+        rv.layoutManager = LinearLayoutManager(this@ActivityBluetooth)
+        adapter = RVAdapter(this@ActivityBluetooth, devices)
+        rv.adapter = adapter
+
+        joinBtn.setOnClickListener {
+            val client = BluetoothClient(this@ActivityBluetooth)
+            //client.connectThread(null)
+            //client.start()
+        }
+
+    }
 
 
+    var mReceiver  = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+
+            Toast.makeText(this@ActivityBluetooth, action, Toast.LENGTH_SHORT).show()
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+
+                val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                devices.add(device)
+                adapter?.notifyDataSetChanged()
+
+                //text?.text = "name: ${device.name}, adress: ${device.address}"
+            }
+        }
+    }
+
+
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        AlertDialog.Builder(this@ActivityBluetooth)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show()
+    }
+
+    override fun onPause() {
+        if(mBluetoothAdapter != null) {
+            (mBluetoothAdapter as BluetoothAdapter).cancelDiscovery()
+        }
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -92,5 +174,8 @@ class ActivityBluetooth: AppCompatActivity() {
         super.onDestroy()
     }
 
+    val itemOnClick: (View, Int, Int) -> Unit = { view, position, type ->
+        Log.d("TAAAG", "test")
+    }
 
 }

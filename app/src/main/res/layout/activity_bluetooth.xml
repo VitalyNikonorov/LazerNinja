@@ -22,4 +22,27 @@
         android:text="visible"
         android:layout_below="@+id/discover_btn"/>
 
+    <Button
+        android:id="@+id/host_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="host"
+        android:layout_below="@+id/visible_btn"
+        />
+
+    <Button
+        android:id="@+id/join_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="join"
+        android:layout_below="@+id/host_btn"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/devices_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/join_btn"/>
+
+
+
 </RelativeLayout>
