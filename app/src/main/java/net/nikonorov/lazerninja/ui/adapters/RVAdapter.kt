@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.ui.ActivityBluetooth
@@ -29,6 +30,10 @@ class RVAdapter(val context : Context, val data : ArrayList<BluetoothDevice>) : 
         return CardViewHolder(view).listen { pos, type ->
             val item = data.get(pos)
             ((context as ActivityBluetooth).application as App).device = item
+
+            context.runOnUiThread(Runnable {
+                Toast.makeText(context, "${item.name} selected", Toast.LENGTH_SHORT).show()
+            })
             Log.i("HOLDERLOG", item.name)
         }
     }

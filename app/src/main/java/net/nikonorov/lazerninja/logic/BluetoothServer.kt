@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.ui.ActivityBluetooth
@@ -77,6 +78,8 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : A
                 if(temp.equals("1")) {
                     (activity.application as App).xPosition += 1f
                 }
+
+                activity.infoTV?.post(Runnable { activity.infoTV?.text = temp })
 
                 Log.i("SERVERLOG", temp)
             }

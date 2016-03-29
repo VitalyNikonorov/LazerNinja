@@ -36,6 +36,8 @@ class ActivityBluetooth : AppCompatActivity() {
     var adapter : RVAdapter? = null
     var client : BluetoothClient? = null
 
+    var infoTV : TextView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -142,6 +144,9 @@ class ActivityBluetooth : AppCompatActivity() {
             client?.send("1")
         }
 
+        infoTV = findViewById(R.id.info_tv) as TextView
+
+
     }
 
 
@@ -170,6 +175,14 @@ class ActivityBluetooth : AppCompatActivity() {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        devices.clear()
+        if (adapter != null){
+            adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onPause() {
