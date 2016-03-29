@@ -124,12 +124,12 @@ class ActivitySaber: Activity(), SensorEventListener{
                 }
             }
 
-            if(System.currentTimeMillis() - lastTime > 2000) {
+            if(System.currentTimeMillis() - lastTime > 15) {
                 lastTime = System.currentTimeMillis()
                 lenearCoordTV?.text = "X: ${lenearCoords[X]}, Y: ${lenearCoords[Y]}, Z: ${lenearCoords[Z]}"
                 angleCoordTV?.text = "X: ${angleCoords[X]}, Y: ${angleCoords[Y]}, Z: ${angleCoords[Z]}"
 
-                val temp = "X: ${lenearCoords[X]}, Y: ${lenearCoords[Y]}, Z: ${lenearCoords[Z]}, X: ${angleCoords[X]}, Y: ${angleCoords[Y]}, Z: ${angleCoords[Z]}"
+                val temp = "lX: ${lenearCoords[X]}, lY: ${lenearCoords[Y]}, lZ: ${lenearCoords[Z]}, aX: ${angleCoords[X]}, aY: ${angleCoords[Y]}, aZ: ${angleCoords[Z]}"
 
                 if( client != null ){
                     client?.send(temp)
