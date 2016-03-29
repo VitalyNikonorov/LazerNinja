@@ -8,7 +8,9 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.widget.TextView
+import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
+import net.nikonorov.lazerninja.logic.BluetoothClient
 
 /**
  * Created by vitaly on 01.03.16.
@@ -31,9 +33,13 @@ class ActivitySaber: Activity(), SensorEventListener{
     var accelTime = 0L
     var gyroTime = 0L
 
+    var lastTime : Long = 0
+
     val X = 0
     val Y = 1
     val Z = 2
+
+    var client : BluetoothClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +66,11 @@ class ActivitySaber: Activity(), SensorEventListener{
         }
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        client = (application as App).client
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -113,8 +124,18 @@ class ActivitySaber: Activity(), SensorEventListener{
                 }
             }
 
-            lenearCoordTV?.text = "Lenear coords: X: ${lenearCoords[X]}, Y: ${lenearCoords[Y]}, Z: ${lenearCoords[Z]}"
-            angleCoordTV?.text = "Angle coords: X: ${angleCoords[X]}, Y: ${angleCoords[Y]}, Z: ${angleCoords[Z]}"
+            if(System.currentTimeMillis() - lastTime > 2000) {
+                lastTime = System.currentTimeMillis()
+                lenearCoordTV?.text = "X: ${lenearCoords[X]}, Y: ${lenearCoords[Y]}, Z: ${lenearCoords[Z]}"
+                angleCoordTV?.text = "X: ${angleCoords[X]}, Y: ${angleCoords[Y]}, Z: ${angleCoords[Z]}"
+
+                val temp = "X: ${lenearCoords[X]}, Y: ${lenearCoords[Y]}, Z: ${lenearCoords[Z]}, X: ${angleCoords[X]}, Y: ${angleCoords[Y]}, Z: ${angleCoords[Z]}"
+
+                if( client != null ){
+                    client?.send(temp)
+                }
+
+            }
 
         }
     }

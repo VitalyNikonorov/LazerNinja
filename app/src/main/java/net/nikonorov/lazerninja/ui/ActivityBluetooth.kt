@@ -129,6 +129,8 @@ class ActivityBluetooth : AppCompatActivity() {
         joinBtn.setOnClickListener {
             client = BluetoothClient(this@ActivityBluetooth)
 
+            (application as App).client = client
+
             if ((application as App).device != null) {
                 client?.connectThread((application as App).device)
                 client?.start()
