@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.logic.BluetoothClient
 import net.nikonorov.lazerninja.logic.BluetoothServer
@@ -128,8 +129,11 @@ class ActivityBluetooth : AppCompatActivity() {
 
         joinBtn.setOnClickListener {
             val client = BluetoothClient(this@ActivityBluetooth)
-            //client.connectThread(null)
-            //client.start()
+
+            if ((application as App).device != null) {
+                client.connectThread((application as App).device)
+                client.start()
+            }
         }
 
     }

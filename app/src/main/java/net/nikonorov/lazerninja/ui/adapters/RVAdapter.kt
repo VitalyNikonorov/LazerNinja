@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
+import net.nikonorov.lazerninja.ui.ActivityBluetooth
 import java.util.*
 import java.util.zip.Inflater
 
@@ -26,6 +28,7 @@ class RVAdapter(val context : Context, val data : ArrayList<BluetoothDevice>) : 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_device, parent, false)
         return CardViewHolder(view).listen { pos, type ->
             val item = data.get(pos)
+            ((context as ActivityBluetooth).application as App).device = item
             Log.i("HOLDERLOG", item.name)
         }
     }
