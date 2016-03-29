@@ -30,18 +30,17 @@ import java.util.*
 class ActivityBluetooth : AppCompatActivity() {
 
     val REQUEST_ENABLE_BT = 1
-    var text: TextView? = null
     var mBluetoothAdapter : BluetoothAdapter? = null
     internal val REQUEST_CODE_LOCATION = 1
     val devices = ArrayList<BluetoothDevice>()
     var adapter : RVAdapter? = null
+    var client : BluetoothClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_bluetooth)
 
-        text = findViewById(R.id.bluetooth_info) as TextView
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (mBluetoothAdapter == null) {
@@ -128,12 +127,17 @@ class ActivityBluetooth : AppCompatActivity() {
         rv.adapter = adapter
 
         joinBtn.setOnClickListener {
-            val client = BluetoothClient(this@ActivityBluetooth)
+            client = BluetoothClient(this@ActivityBluetooth)
 
             if ((application as App).device != null) {
-                client.connectThread((application as App).device)
-                client.start()
+                client?.connectThread((application as App).device)
+                client?.start()
             }
+        }
+
+        val sendBtn = findViewById(R.id.send_btn)
+        sendBtn.setOnClickListener {
+            client?.send("1")
         }
 
     }

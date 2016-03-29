@@ -17,6 +17,8 @@ class BluetoothClient (val context : Context) : Thread() {
     var mmDevice : BluetoothDevice? = null
     val MY_UUID = UUID.fromString(context.getString(R.string.UUID))
 
+    var bout : BufferedOutputStream? = null
+
     fun connectThread(device : BluetoothDevice?) {
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
@@ -54,10 +56,15 @@ class BluetoothClient (val context : Context) : Thread() {
 
     fun manageConnectedSocket(socket : BluetoothSocket?){
         val os = socket?.getOutputStream()
-        val bout = BufferedOutputStream(os)
+        bout = BufferedOutputStream(os)
 
-        bout.write("data".toByteArray())
-        bout.flush()
+        bout?.write("data".toByteArray())
+        bout?.flush()
+    }
+
+    fun send(data : String){
+        bout?.write(data.toByteArray())
+        bout?.flush()
     }
 
     /** Will cancel an in-progress connection, and close the socket */
