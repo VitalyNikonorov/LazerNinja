@@ -26,6 +26,8 @@ import com.google.vrtoolkit.cardboard.Eye;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
+import net.nikonorov.lazerninja.App;
+
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
 
     private CardboardCamera cam;
@@ -187,8 +189,9 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
         }
 
-        saber.transform.rotate(0, 1, 0, - Gdx.graphics.getDeltaTime() * 30);
+        saber.transform.rotate(((App)getApplication()).getXPosition(), 1, 0, - Gdx.graphics.getDeltaTime() * 30);
 
+        //saber.transform.translate(((App)getApplication()).getXPosition(), 5, -3);
     }
 
     @Override

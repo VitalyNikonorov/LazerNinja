@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
+import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
+import net.nikonorov.lazerninja.ui.ActivityBluetooth
 import java.io.IOException
 import java.util.*
 
@@ -13,10 +15,10 @@ import java.util.*
  * Created by vitaly on 22.03.16.
  */
 
-class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val context : Context) : Thread() {
+class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : ActivityBluetooth) : Thread() {
 
     val NAME = "HOST"
-    val MY_UUID = UUID.fromString(context.getString(R.string.UUID))
+    val MY_UUID = UUID.fromString(activity.getString(R.string.UUID))
 
 
     var mmServerSocket : BluetoothServerSocket? = null
@@ -71,6 +73,11 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val context : Co
                 System.arraycopy(buffer, 0, readBuffer, 0, readBytes)
 
                 temp = String(readBuffer)
+
+                if(temp.equals("1")) {
+                    (activity.application as App).xPosition += 1f
+                }
+
                 Log.i("SERVERLOG", temp)
             }
         }

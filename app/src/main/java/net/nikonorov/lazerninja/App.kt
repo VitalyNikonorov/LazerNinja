@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothDevice
 
 class App : Application() {
     var device : BluetoothDevice? = null
+    var xPosition : Float = 0f
 
     companion object {
         var isActive = false
