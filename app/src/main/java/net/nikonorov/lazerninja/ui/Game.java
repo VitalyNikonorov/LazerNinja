@@ -4,6 +4,7 @@ package net.nikonorov.lazerninja.ui;
  * Created by vitaly on 20.03.16.
  */
 import android.os.Bundle;
+import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -21,12 +23,15 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.Eye;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
-import net.nikonorov.lazerninja.App;
+
 
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
 
@@ -35,6 +40,9 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     private ModelInstance saber;
     private ModelInstance scene;
     private ModelBatch batch;
+    private Stage stage;
+    private Label label;
+    private BitmapFont font;
     private Environment environment;
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 1000.0f;
@@ -131,7 +139,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         saber = new ModelInstance(modelLoader.loadModel(Gdx.files.internal("saber/saber.g3db")));
 
-        saber.transform.scl(0.4f);
+        saber.transform.scl(0.2f);
 
 
 
@@ -154,7 +162,13 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         troopers[3].transform.translate(5, 0, 0);
         troopers[3].transform.scl(0.01f);
 
-        saber.transform.translate(2, 5, -3);
+        saber.transform.translate(0, 10f, -1.7f);
+
+        stage = new Stage();
+        font = new BitmapFont();
+        label = new Label(" TEXT ", new Label.LabelStyle(font, Color.RED));
+        label.setPosition(Gdx.graphics.getWidth() / 2 - 3, Gdx.graphics.getHeight() / 2 - 9);
+        stage.addActor(label);
     }
 
     @Override
@@ -189,7 +203,21 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
         }
 
-        saber.transform.rotate(((App)getApplication()).getXPosition(), 1, 0, - Gdx.graphics.getDeltaTime() * 30);
+        Vector3 direction = cam.direction;
+
+
+
+        Log.i("GAme", cam.toString());
+
+
+
+        //saber.transform.trn(cam.combined);
+
+        //saber.transform.translate(cam.direction);
+
+        //saber.transform.translate(0.0f, 0.01f, 0.0f);
+
+        //saber.transform.rotate(((App) getApplication()).getXPosition(), 1, 0, - Gdx.graphics.getDeltaTime() * 30);
 
         //saber.transform.translate(((App)getApplication()).getXPosition(), 5, -3);
     }
@@ -215,6 +243,8 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         batch.render(scene, environment);
 
         batch.end();
+
+        stage.draw();
     }
 
     @Override

@@ -46,6 +46,7 @@
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.ActivitySaber"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.ActivityBluetooth"

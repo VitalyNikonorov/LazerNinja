@@ -1,10 +1,16 @@
 package net.nikonorov.lazerninja.ui
 
+import android.Manifest
 import android.app.Activity
 import android.app.LoaderManager
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.Loader
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import net.nikonorov.lazerninja.App
@@ -21,6 +27,8 @@ import net.nikonorov.lazerninja.logic.api.AuthRequest
 class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProfile> {
 
     val LOADER_ID = 4
+
+    val REQUEST_CODE_EXTERNAL = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +64,34 @@ class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProf
             startActivity(Intent(this@ActivityMain, ActivityBluetooth::class.java))
         }
 
+        takePermission()
+
+    }
+
+    fun takePermission(){
+        val hasReadContactsPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                showMessageOKCancel("You need to allow access to WRITE_EXTERNAL_STORAGE",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            ActivityCompat.requestPermissions(this,
+                                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                                    REQUEST_CODE_EXTERNAL)
+                        })
+                return
+            }
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    REQUEST_CODE_EXTERNAL)
+            return
+        }
+    }
+
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        AlertDialog.Builder(this).setMessage(message).setPositiveButton("OK", okListener).setNegativeButton("Cancel", null).create().show()
     }
 
 
