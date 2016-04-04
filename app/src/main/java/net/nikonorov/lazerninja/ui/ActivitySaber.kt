@@ -24,10 +24,11 @@ class ActivitySaber: Activity(), SensorEventListener{
 
 
     ///////
+
     var rotationMatrix : FloatArray? = null    //Матрица поворота
     var accelData : FloatArray? = null           //Данные с акселерометра
     var magnetData : FloatArray? = null       //Данные геомагнитного датчика
-    var orientationData : FloatArray? = null //Матрица положения в пространстве
+    var orientationData  = FloatArray(3) //Матрица положения в пространстве
 
     ///////
 
@@ -56,6 +57,8 @@ class ActivitySaber: Activity(), SensorEventListener{
     val Y = 1
     val Z = 2
 
+    var mSensorManager : SensorManager? = null
+
     var client : BluetoothClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,33 +66,51 @@ class ActivitySaber: Activity(), SensorEventListener{
 
         setContentView(R.layout.activity_saber)
 
+
+        rotationMatrix = FloatArray(16)
+        accelData = FloatArray(3)
+        magnetData = FloatArray(3)
+
+
         val saber = findViewById(R.id.saber)
         dataTV = findViewById(R.id.saber_tv) as TextView
         lenearCoordTV = findViewById(R.id.linear_coord_tv) as TextView
         angleCoordTV = findViewById(R.id.angle_coord_tv) as TextView
 
-        val mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-        mSensorManager.registerListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+        mSensorManager?.registerListener(this,
+                mSensorManager?.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_FASTEST);
 
-        mSensorManager.registerListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+        mSensorManager?.registerListener(this,
+                mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_FASTEST);
 
 
 
-        val root : String = Environment.getExternalStorageDirectory().toString()
-        val file = File("$root/file.txt")
+//        val root : String = Environment.getExternalStorageDirectory().toString()
+//        val file = File("$root/file.txt")
+//
+//        outStream = FileOutputStream(file)
+//
+//        saber.setOnClickListener {
+//            isWork = !isWork
+//        }
 
-        outStream = FileOutputStream(file)
 
-        saber.setOnClickListener {
-            isWork = !isWork
+    }
+
+
+    fun loadNewSensorData(event : SensorEvent?) {
+        val type = event?.sensor?.getType(); //Определяем тип датчика
+        if (type == Sensor.TYPE_ACCELEROMETER) { //Если акселерометр
+            accelData = event?.values?.clone();
         }
 
-
+        if (type == Sensor.TYPE_MAGNETIC_FIELD) { //Если геомагнитный датчик
+            magnetData = event?.values?.clone();
+        }
     }
 
     override fun onResume() {
@@ -98,112 +119,128 @@ class ActivitySaber: Activity(), SensorEventListener{
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if(isWork && event != null){
-
-            when(event.sensor.type){
-                Sensor.TYPE_ACCELEROMETER -> {
-
-                    if(accelTime == 0L){
-                        accelTime = System.currentTimeMillis()
-                    }
-
-                    val deltaTime = (System.currentTimeMillis() - accelTime) / 1000.0
 
 
-                    val alpha = 0.01f;
 
-                    gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-                    gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-                    gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        loadNewSensorData(event); // Получаем данные с датчика
+        SensorManager.getRotationMatrix(rotationMatrix, null, accelData, magnetData) //Получаем матрицу поворота
+        SensorManager.getOrientation(rotationMatrix, orientationData) //Получаем данные ориентации устройства в пространстве
 
-                    linearAcceleration[0] = event.values[0] - gravity[0];
-                    linearAcceleration[1] = event.values[1] - gravity[1];
-                    linearAcceleration[2] = event.values[2] - gravity[2];
-
-
-                    for ( i in 0..2 ){
-                        if (Math.abs(linearAcceleration[i]) < 0.2) {
-                            linearAcceleration[i] = 0.0
-                        }
-                    }
-
-                    lenearVelosity[X] += deltaTime * linearAcceleration[X]
-                    lenearVelosity[Y] += deltaTime * linearAcceleration[Y]
-                    lenearVelosity[Z] += deltaTime * linearAcceleration[Z]
-
-
-                    lenearCoords[X] += lenearVelosity[X] * deltaTime + linearAcceleration[X] * deltaTime * deltaTime / 2
-                    lenearCoords[Y] += lenearVelosity[Y] * deltaTime + linearAcceleration[Y] * deltaTime * deltaTime / 2
-                    lenearCoords[Z] += lenearVelosity[Z] * deltaTime + linearAcceleration[Z] * deltaTime * deltaTime / 2
-
-                    accelTime = System.currentTimeMillis()
-
-                    //outStream?.write("a:\t${linearAcceleration[0]}\t${linearAcceleration[1]}\t${linearAcceleration[2]}\t".toByteArray())
-                    //outStream?.flush()
-
-                }
-                Sensor.TYPE_ORIENTATION -> {
-
-                    if(gyroTime == 0L){
-                        gyroTime = System.currentTimeMillis()
-                    }
-
-                    val deltaTime = (System.currentTimeMillis() - gyroTime) /1000.0
-
-
-//                    if (Math.abs(event.values[X]) < 0.05 )
-//                        tempGyro[0] = 0.0
-//                    else
-//                        tempGyro[0] = event.values[X] * 1.0
+        Log.i("TAG", "x: ${orientationData[0]}, y: ${orientationData[1]}, z: ${orientationData[2]}")
+        
+//        if(isWork && event != null){
 //
-//                    if (Math.abs(event.values[Y]) < 0.05 )
-//                        tempGyro[1] = 0.0
-//                    else
-//                        tempGyro[1] = event.values[Y] * 1.0
+//            when(event.sensor.type){
+//                Sensor.TYPE_ACCELEROMETER -> {
 //
-//                    if (Math.abs(event.values[Z]) < 0.05 )
-//                        tempGyro[2] = 0.0
-//                    else
-//                        tempGyro[2] = event.values[Z] * 1.0
+//                    if(accelTime == 0L){
+//                        accelTime = System.currentTimeMillis()
+//                    }
+//
+//                    val deltaTime = (System.currentTimeMillis() - accelTime) / 1000.0
+//
+//
+//                    val alpha = 0.01f;
+//
+//                    gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+//                    gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+//                    gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+//
+//                    linearAcceleration[0] = event.values[0] - gravity[0];
+//                    linearAcceleration[1] = event.values[1] - gravity[1];
+//                    linearAcceleration[2] = event.values[2] - gravity[2];
+//
+//
+//                    for ( i in 0..2 ){
+//                        if (Math.abs(linearAcceleration[i]) < 0.2) {
+//                            linearAcceleration[i] = 0.0
+//                        }
+//                    }
+//
+//                    lenearVelosity[X] += deltaTime * linearAcceleration[X]
+//                    lenearVelosity[Y] += deltaTime * linearAcceleration[Y]
+//                    lenearVelosity[Z] += deltaTime * linearAcceleration[Z]
+//
+//
+//                    lenearCoords[X] += lenearVelosity[X] * deltaTime + linearAcceleration[X] * deltaTime * deltaTime / 2
+//                    lenearCoords[Y] += lenearVelosity[Y] * deltaTime + linearAcceleration[Y] * deltaTime * deltaTime / 2
+//                    lenearCoords[Z] += lenearVelosity[Z] * deltaTime + linearAcceleration[Z] * deltaTime * deltaTime / 2
+//
+//                    accelTime = System.currentTimeMillis()
+//
+//                    //outStream?.write("a:\t${linearAcceleration[0]}\t${linearAcceleration[1]}\t${linearAcceleration[2]}\t".toByteArray())
+//                    //outStream?.flush()
+//
+//                }
+//                Sensor.TYPE_ORIENTATION -> {
+//
+//                    if(gyroTime == 0L){
+//                        gyroTime = System.currentTimeMillis()
+//                    }
+//
+//                    val deltaTime = (System.currentTimeMillis() - gyroTime) /1000.0
+//
+//
+////                    if (Math.abs(event.values[X]) < 0.05 )
+////                        tempGyro[0] = 0.0
+////                    else
+////                        tempGyro[0] = event.values[X] * 1.0
+////
+////                    if (Math.abs(event.values[Y]) < 0.05 )
+////                        tempGyro[1] = 0.0
+////                    else
+////                        tempGyro[1] = event.values[Y] * 1.0
+////
+////                    if (Math.abs(event.values[Z]) < 0.05 )
+////                        tempGyro[2] = 0.0
+////                    else
+////                        tempGyro[2] = event.values[Z] * 1.0
+//
+//
+////                    angleCoords[X] += tempGyro[X] * deltaTime
+////                    angleCoords[Y] += tempGyro[Y] * deltaTime
+////                    angleCoords[Z] += tempGyro[Z] * deltaTime
+//
+//                    angleCoords[X] = event.values[X] * 1.0
+//                    angleCoords[Y] = event.values[Y] * 1.0
+//                    angleCoords[Z] = event.values[Z] * 1.0
+//
+//                    Log.i("TAG", "X: ${angleCoords[X]},\nY: ${angleCoords[Y]},\nZ: ${angleCoords[Z]}")
+//
+//                    accelTime = System.currentTimeMillis()
+//
+//                    //outStream?.write("g:\t${event.values[X]}\t${event.values[Y]}\t${event.values[Z]}\n".toByteArray())
+//                    //outStream?.flush()
+//                }
+//            }
 
+//            if(System.currentTimeMillis() - lastTime > 15) {
+//                lastTime = System.currentTimeMillis()
+//                lenearCoordTV?.text = "X: ${lenearCoords[X]},\nY: ${lenearCoords[Y]},\nZ: ${lenearCoords[Z]}"
+//                angleCoordTV?.text = "X: ${angleCoords[X]},\nY: ${angleCoords[Y]},\nZ: ${angleCoords[Z]}"
+//
+//                val temp = "lX: ${lenearCoords[X]}, lY: ${lenearCoords[Y]}, lZ: ${lenearCoords[Z]}, aX: ${angleCoords[X]}, aY: ${angleCoords[Y]}, aZ: ${angleCoords[Z]}"
+//
+//                if( client != null ){
+//                    client?.send(temp)
+//                }
+//
+//            }
 
-//                    angleCoords[X] += tempGyro[X] * deltaTime
-//                    angleCoords[Y] += tempGyro[Y] * deltaTime
-//                    angleCoords[Z] += tempGyro[Z] * deltaTime
-
-                    angleCoords[X] = event.values[X] * 1.0
-                    angleCoords[Y] = event.values[Y] * 1.0
-                    angleCoords[Z] = event.values[Z] * 1.0
-
-                    Log.i("TAG", "X: ${angleCoords[X]},\nY: ${angleCoords[Y]},\nZ: ${angleCoords[Z]}")
-
-                    accelTime = System.currentTimeMillis()
-
-                    //outStream?.write("g:\t${event.values[X]}\t${event.values[Y]}\t${event.values[Z]}\n".toByteArray())
-                    //outStream?.flush()
-                }
-            }
-
-            if(System.currentTimeMillis() - lastTime > 15) {
-                lastTime = System.currentTimeMillis()
-                lenearCoordTV?.text = "X: ${lenearCoords[X]},\nY: ${lenearCoords[Y]},\nZ: ${lenearCoords[Z]}"
-                angleCoordTV?.text = "X: ${angleCoords[X]},\nY: ${angleCoords[Y]},\nZ: ${angleCoords[Z]}"
-
-                val temp = "lX: ${lenearCoords[X]}, lY: ${lenearCoords[Y]}, lZ: ${lenearCoords[Z]}, aX: ${angleCoords[X]}, aY: ${angleCoords[Y]}, aZ: ${angleCoords[Z]}"
-
-                if( client != null ){
-                    client?.send(temp)
-                }
-
-            }
-
-        }
+//        }
     }
+
+    override fun onPause() {
+        mSensorManager?.unregisterListener(this);
+        super.onPause()
+
+    }
+
 
     override fun onStop() {
         super.onStop()
-        outStream?.flush()
-        outStream?.close()
+//        outStream?.flush()
+//        outStream?.close()
     }
 
 
