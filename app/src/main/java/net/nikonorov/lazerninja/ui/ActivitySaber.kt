@@ -12,6 +12,7 @@ import android.widget.TextView
 import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.logic.BluetoothClient
+import org.json.JSONObject
 
 /**
  * Created by vitaly on 01.03.16.
@@ -67,7 +68,7 @@ class ActivitySaber: Activity(), SensorEventListener{
 
         mSensorManager?.registerListener(this,
                 mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_FASTEST);
+                SensorManager.SENSOR_DELAY_NORMAL);
 
         saber.setOnClickListener {
             isWork = !isWork
@@ -100,6 +101,10 @@ class ActivitySaber: Activity(), SensorEventListener{
                 var quaternions = FloatArray(4);
                 SensorManager.getQuaternionFromVector(quaternions, event?.values);
                 Log.i("TAG", "${quaternions[0]}, ${quaternions[1]}, ${quaternions[2]}, ${quaternions[3]}");
+
+                val msg = "{\"x\":  ${quaternions[0]}, \"y\": ${quaternions[1]}, \"z\": ${quaternions[2]}, \"w\": ${quaternions[3]}}"
+
+                (application as App).client?.send(msg)
             }
             //        else {
             //            loadNewSensorData(event); // Получаем данные с датчика

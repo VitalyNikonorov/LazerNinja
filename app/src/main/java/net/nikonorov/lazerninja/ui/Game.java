@@ -32,6 +32,7 @@ import com.google.vrtoolkit.cardboard.Eye;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
+import net.nikonorov.lazerninja.App;
 
 
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
@@ -206,7 +207,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         Vector3 direction = cam.direction;
 
-        Quaternion q = new Quaternion(0, 0, 0, 0);
+        Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
         saber.transform.rotate(q);
 
         Log.i("GAme", cam.toString());

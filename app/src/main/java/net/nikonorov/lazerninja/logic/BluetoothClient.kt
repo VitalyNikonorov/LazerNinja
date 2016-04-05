@@ -58,7 +58,7 @@ class BluetoothClient (val context : Context) : Thread() {
         val os = socket?.getOutputStream()
         bout = BufferedOutputStream(os)
 
-        bout?.write("data".toByteArray())
+        bout?.write("{\"x\":  0.0, \"y\": 0.0, \"z\": 0.0, \"w\": 0.0}".toByteArray())
         bout?.flush()
     }
 

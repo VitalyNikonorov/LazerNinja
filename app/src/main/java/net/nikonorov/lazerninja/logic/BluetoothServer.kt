@@ -83,7 +83,7 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : A
 
                 val json = JSONObject(temp);
 
-                val tempQuaternion = Quaternion(json.getDouble("x") as Float, json.getDouble("y") as Float, json.getDouble("z") as Float, json.getDouble("w") as Float)
+                val tempQuaternion = Quaternion(json.getDouble("x").toFloat(), json.getDouble("y").toFloat(), json.getDouble("z").toFloat(), json.getDouble("w").toFloat())
 
                 (activity.application as App).quaternion = tempQuaternion
 
