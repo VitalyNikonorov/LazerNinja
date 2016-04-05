@@ -206,6 +206,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         Vector3 direction = cam.direction;
 
 
+        //saber.transform.ro
 
         Log.i("GAme", cam.toString());
 
