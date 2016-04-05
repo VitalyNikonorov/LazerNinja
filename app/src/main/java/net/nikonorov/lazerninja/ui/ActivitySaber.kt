@@ -33,7 +33,7 @@ class ActivitySaber: Activity(), SensorEventListener{
     var dataTV: TextView? = null
     var lenearCoordTV: TextView? = null
     var angleCoordTV: TextView? = null
-    
+
 
     var mSensorManager : SensorManager? = null
 
@@ -69,6 +69,9 @@ class ActivitySaber: Activity(), SensorEventListener{
                 mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
                 SensorManager.SENSOR_DELAY_FASTEST);
 
+        saber.setOnClickListener {
+            isWork = !isWork
+        }
 
     }
 
@@ -91,17 +94,19 @@ class ActivitySaber: Activity(), SensorEventListener{
 
     override fun onSensorChanged(event: SensorEvent?) {
 
+        if(isWork) {
 
-        if (event?.sensor?.type == Sensor.TYPE_ROTATION_VECTOR){
-            var quaternions = FloatArray(4);
-            SensorManager.getQuaternionFromVector(quaternions, event?.values);
-            Log.i("TAG", "${quaternions[0]}, ${quaternions[1]}, ${quaternions[2]}, ${quaternions[3]}");
+            if (event?.sensor?.type == Sensor.TYPE_ROTATION_VECTOR) {
+                var quaternions = FloatArray(4);
+                SensorManager.getQuaternionFromVector(quaternions, event?.values);
+                Log.i("TAG", "${quaternions[0]}, ${quaternions[1]}, ${quaternions[2]}, ${quaternions[3]}");
+            }
+            //        else {
+            //            loadNewSensorData(event); // Получаем данные с датчика
+            //            SensorManager.getRotationMatrix(rotationMatrix, null, accelData, magnetData) //Получаем матрицу поворота
+            //            SensorManager.getOrientation(rotationMatrix, orientationData) //Получаем данные ориентации устройства в пространстве
+            //        }
         }
-//        else {
-//            loadNewSensorData(event); // Получаем данные с датчика
-//            SensorManager.getRotationMatrix(rotationMatrix, null, accelData, magnetData) //Получаем матрицу поворота
-//            SensorManager.getOrientation(rotationMatrix, orientationData) //Получаем данные ориентации устройства в пространстве
-//        }
 
     }
 

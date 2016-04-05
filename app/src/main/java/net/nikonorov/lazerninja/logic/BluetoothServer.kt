@@ -6,9 +6,11 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.badlogic.gdx.math.Quaternion
 import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
 import net.nikonorov.lazerninja.ui.ActivityBluetooth
+import org.json.JSONObject
 import java.io.IOException
 import java.util.*
 
@@ -75,9 +77,15 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : A
 
                 temp = String(readBuffer)
 
-                if(temp.equals("1")) {
-                    (activity.application as App).xPosition += 1f
-                }
+//                if(temp.equals("1")) {
+//                    (activity.application as App).xPosition += 1f
+//                }
+
+                val json = JSONObject(temp);
+
+                val tempQuaternion = Quaternion(json.getDouble("x") as Float, json.getDouble("y") as Float, json.getDouble("z") as Float, json.getDouble("w") as Float)
+
+                (activity.application as App).quaternion = tempQuaternion
 
                 activity.infoTV?.post(Runnable { activity.infoTV?.text = temp })
 

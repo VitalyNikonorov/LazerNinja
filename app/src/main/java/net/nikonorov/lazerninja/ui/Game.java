@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -205,8 +206,8 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         Vector3 direction = cam.direction;
 
-
-        //saber.transform.ro
+        Quaternion q = new Quaternion(0, 0, 0, 0);
+        saber.transform.rotate(q);
 
         Log.i("GAme", cam.toString());
 
