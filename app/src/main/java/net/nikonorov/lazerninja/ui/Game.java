@@ -208,7 +208,9 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         Vector3 direction = cam.direction;
 
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
-        saber.transform.rotate(q);
+        //saber.transform.rotate(q);
+
+        saber.transform.set(q);
 
         Log.i("GAme", cam.toString());
 
