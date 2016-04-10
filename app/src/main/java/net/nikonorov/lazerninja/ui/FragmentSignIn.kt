@@ -39,11 +39,13 @@ class FragmentSignIn : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
 
             val bundle = Bundle()
 
-            bundle.putString("username", login)
-            bundle.putString("password", pass)
-
-
-            loaderManager.initLoader(LOADER_ID, bundle, this@FragmentSignIn)
+            if(login != "" && pass != "") {
+                bundle.putString("username", login)
+                bundle.putString("password", pass)
+                loaderManager.initLoader(LOADER_ID, bundle, this@FragmentSignIn)
+            } else {
+                Toast.makeText(activity, "Поля не могут быть пустыми", Toast.LENGTH_SHORT).show()
+            }
 
         }
 
