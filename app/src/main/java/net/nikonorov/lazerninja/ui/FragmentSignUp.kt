@@ -52,8 +52,11 @@ class FragmentSignUp : Fragment(), LoaderManager.LoaderCallbacks<TextResponse> {
             bundle.putString("password1", pass)
             bundle.putString("password2", confirmPass)
 
-            loaderManager.initLoader(LOADER_ID, bundle, this@FragmentSignUp)
-
+            if(login != "" && email != "" && firstName != "" && lastName != "" && pass != "" && confirmPass != "") {
+                loaderManager.initLoader(LOADER_ID, bundle, this@FragmentSignUp)
+            }else{
+                Toast.makeText(context, "Поля не могут быть пустыми", Toast.LENGTH_SHORT).show()
+            }
         }
 
         return view

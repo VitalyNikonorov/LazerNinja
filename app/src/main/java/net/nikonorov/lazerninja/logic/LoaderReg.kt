@@ -2,6 +2,7 @@ package net.nikonorov.lazerninja.logic
 
 import android.content.Context
 import android.content.Loader
+import android.widget.Toast
 import net.nikonorov.lazerninja.logic.api.TextResponse
 import net.nikonorov.lazerninja.logic.api.RegRequest
 import net.nikonorov.lazerninja.logic.api.UserAPI
@@ -52,12 +53,17 @@ class LoaderReg : Loader<TextResponse> {
         call.enqueue(object : Callback<TextResponse> {
             override fun onResponse(p0: Call<TextResponse>?, response: Response<TextResponse>?) {
                 if(response != null) {
-                    deliverResult(response.body())
+                    if(response.errorBody() != null){
+                        Toast.makeText(context, "Ошибка. Проверьте данные", Toast.LENGTH_SHORT).show()
+                    }else if (response.body() != null) {
+                        deliverResult(response.body())
+                    }
                 }
             }
 
             override fun onFailure(p0: Call<TextResponse>?, p1: Throwable?) {
-                throw UnsupportedOperationException()
+                Toast.makeText(context, "Ошибка", Toast.LENGTH_SHORT).show()
+                //throw UnsupportedOperationException()
             }
 
         })
