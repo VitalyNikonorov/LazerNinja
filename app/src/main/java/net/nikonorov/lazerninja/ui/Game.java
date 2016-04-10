@@ -195,10 +195,11 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
 
         Model trooperModel = modelLoader.loadModel(Gdx.files.internal("trooper/trooper.g3db"));
-        Model saberModel = modelLoader.loadModel(Gdx.files.internal("saber/saber.g3db"));
+        Model saberModel = modelLoader.loadModel(Gdx.files.internal("ssaber/saber.g3db"));
         saber = new ModelInstance(saberModel);
 
-        saber.transform.scl(0.02f);
+        saber.transform.translate(-1.0f, 0, 0);
+        //saber.transform.scl(0.02f);
 
 
         Mesh saberMesh = saberModel.meshes.get(0);
@@ -226,8 +227,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         troopers[3] = new ModelInstance(trooperModel);
         troopers[3].transform.translate(5, 0, 0);
         troopers[3].transform.scl(0.01f);
-
-        saber.transform.translate(4, 0, 0);
 
         stage = new Stage();
         font = new BitmapFont();
@@ -287,14 +286,17 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
             Vector3 location = new Vector3();
             lazers.get(i).instance.transform.getTranslation(location);
-            if (location.z > 0){
-                lazers.remove(i);
-                --hp;
-            }
 
             if (checkCollision(saberCollisionObject, lazers.get(i).collisionObject)) {
                 //lazers.remove(i);
                 lazers.get(i).dy = -2.0f;
+                lazers.get(i).dx -= lazers.get(i).dx;
+                lazers.get(i).dz -= lazers.get(i).dz;
+            }
+
+            if (location.z > 0){
+                lazers.remove(i);
+                --hp;
             }
 
         }
