@@ -34,6 +34,8 @@ import com.google.vrtoolkit.cardboard.Viewport;
 
 import net.nikonorov.lazerninja.App;
 
+import java.util.ArrayList;
+
 
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
 
@@ -49,6 +51,10 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 1000.0f;
     private static final float CAMERA_Z = 0;//.1f;
+    private ArrayList<ModelInstance> bullets = new ArrayList<>();
+    private Model bulletModel;
+
+    private long lastTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,13 +170,20 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         troopers[3].transform.translate(5, 0, 0);
         troopers[3].transform.scl(0.01f);
 
-        saber.transform.translate(0, 10f, -1.7f);
+        saber.transform.translate(4, 0, 0);
 
         stage = new Stage();
         font = new BitmapFont();
         label = new Label(" TEXT ", new Label.LabelStyle(font, Color.RED));
         label.setPosition(Gdx.graphics.getWidth() / 2 - 3, Gdx.graphics.getHeight() / 2 - 9);
         stage.addActor(label);
+
+
+
+//        ModelBuilder modelBuilder = new ModelBuilder();
+//        Model bulletModel = modelBuilder.createCylinder(0.5f, 1f, 0.5f, 3, new Material(ColorAttribute.createDiffuse(Color.BLUE)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+
+        bulletModel = loader.loadModel(Gdx.files.internal("lazer/sphere.obj"));
     }
 
     @Override
@@ -205,26 +218,30 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
         }
 
-        Vector3 direction = cam.direction;
-
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
-        //saber.transform.rotate(q);
 
         saber.transform.set(q);
 
-        Log.i("GAme", cam.toString());
+        //Log.i("GAme", cam.toString());
+        long curTime = System.currentTimeMillis();
 
+        for (int i = 0; i < bullets.size(); i++){
+            bullets.get(i).transform.translate(0, 0, 0.1f);
 
+            Vector3 location = new Vector3();
+            bullets.get(i).transform.getTranslation(location);
+            if (location.z > 0){
+                bullets.remove(i);
+            }
+        }
 
-        //saber.transform.trn(cam.combined);
-
-        //saber.transform.translate(cam.direction);
-
-        //saber.transform.translate(0.0f, 0.01f, 0.0f);
-
-        //saber.transform.rotate(((App) getApplication()).getXPosition(), 1, 0, - Gdx.graphics.getDeltaTime() * 30);
-
-        //saber.transform.translate(((App)getApplication()).getXPosition(), 5, -3);
+        if( curTime - lastTime > 1500 ){
+            lastTime = curTime;
+            ModelInstance bullet = new ModelInstance(bulletModel);
+            bullet.transform.translate(0, 2.75f, -4);
+            bullet.transform.scl(0.1f);
+            bullets.add(bullet);
+        }
     }
 
     @Override
@@ -244,8 +261,11 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             batch.render(troopers[i], environment);
         }
 
-        batch.render(saber, environment);
+        //batch.render(saber, environment);
         batch.render(scene, environment);
+        for (int i = 0; i < bullets.size(); i++){
+            batch.render(bullets.get(i), environment);
+        }
 
         batch.end();
 

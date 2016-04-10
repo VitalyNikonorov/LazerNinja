@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.TextView
 import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.R
@@ -43,6 +44,8 @@ class ActivitySaber: Activity(), SensorEventListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         setContentView(R.layout.activity_saber)
 
 
@@ -68,7 +71,7 @@ class ActivitySaber: Activity(), SensorEventListener{
 
         mSensorManager?.registerListener(this,
                 mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_NORMAL);
+                SensorManager.SENSOR_DELAY_GAME);
 
         saber.setOnClickListener {
             isWork = !isWork

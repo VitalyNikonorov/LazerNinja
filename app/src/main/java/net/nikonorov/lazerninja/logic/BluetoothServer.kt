@@ -75,21 +75,27 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : A
 
                 System.arraycopy(buffer, 0, readBuffer, 0, readBytes)
 
-                temp = String(readBuffer)
+                val sb = StringBuffer()
+                sb.append(String(readBuffer))
 
-//                if(temp.equals("1")) {
-//                    (activity.application as App).xPosition += 1f
-//                }
+                val temp = sb.toString()
 
-                val json = JSONObject(temp);
+                val end = temp.indexOf('}')
+                val begin = temp.indexOf('{')
 
-                val tempQuaternion = Quaternion(json.getDouble("x").toFloat(), json.getDouble("y").toFloat(), json.getDouble("z").toFloat(), json.getDouble("w").toFloat())
+                if( end != -1 && begin != -1 && begin < end ){
+                    val json = JSONObject(temp);
 
-                (activity.application as App).quaternion = tempQuaternion
+                    val tempQuaternion = Quaternion(json.getDouble("x").toFloat(), json.getDouble("y").toFloat(), json.getDouble("z").toFloat(), json.getDouble("w").toFloat())
 
-                activity.infoTV?.post(Runnable { activity.infoTV?.text = temp })
+                    (activity.application as App).quaternion = tempQuaternion
 
-                Log.i("SERVERLOG", temp)
+                    activity.infoTV?.post(Runnable { activity.infoTV?.text = temp })
+
+                    sb.setLength(0)
+
+                    Log.i("SERVERLOG", temp)
+                }
             }
         }
     }
