@@ -4,7 +4,6 @@ package net.nikonorov.lazerninja.ui;
  * Created by vitaly on 20.03.16.
  */
 import android.os.Bundle;
-import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -33,8 +32,10 @@ import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
 import net.nikonorov.lazerninja.App;
+import net.nikonorov.lazerninja.logic.Bullet;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
@@ -51,8 +52,11 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 1000.0f;
     private static final float CAMERA_Z = 0;//.1f;
-    private ArrayList<ModelInstance> bullets = new ArrayList<>();
+    private ArrayList<Bullet> bullets = new ArrayList<>();
     private Model bulletModel;
+    private Random random;
+
+    private int hp = 20;
 
     private long lastTime = 0;
 
@@ -70,6 +74,8 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         cam.lookAt(0,3f,-5f);
         cam.near = Z_NEAR;
         cam.far = Z_FAR;
+
+        random = new Random();
 
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
@@ -174,11 +180,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         stage = new Stage();
         font = new BitmapFont();
-        label = new Label(" TEXT ", new Label.LabelStyle(font, Color.RED));
-        label.setPosition(Gdx.graphics.getWidth() / 2 - 3, Gdx.graphics.getHeight() / 2 - 9);
-        stage.addActor(label);
-
-
 
 //        ModelBuilder modelBuilder = new ModelBuilder();
 //        Model bulletModel = modelBuilder.createCylinder(0.5f, 1f, 0.5f, 3, new Material(ColorAttribute.createDiffuse(Color.BLUE)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
@@ -226,20 +227,28 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         long curTime = System.currentTimeMillis();
 
         for (int i = 0; i < bullets.size(); i++){
-            bullets.get(i).transform.translate(0, 0, 0.1f);
+            bullets.get(i).instance.transform.translate(bullets.get(i).dx, bullets.get(i).dz, bullets.get(i).dy);
 
             Vector3 location = new Vector3();
-            bullets.get(i).transform.getTranslation(location);
+            bullets.get(i).instance.transform.getTranslation(location);
             if (location.z > 0){
                 bullets.remove(i);
+                --hp;
             }
         }
 
-        if( curTime - lastTime > 1500 ){
+        if( curTime - lastTime > 3000 ){
             lastTime = curTime;
-            ModelInstance bullet = new ModelInstance(bulletModel);
-            bullet.transform.translate(0, 2.75f, -4);
-            bullet.transform.scl(0.1f);
+            ModelInstance bulletInstance = new ModelInstance(bulletModel);
+            bulletInstance.transform.translate(0, 2.75f, -4);
+            bulletInstance.transform.scl(0.05f);
+
+            Bullet bullet = new Bullet();
+            bullet.instance = bulletInstance;
+            bullet.dx = (float) (random.nextInt() % 100) / 1000;
+            bullet.dz = (float) (random.nextInt() % 100) / 1000;
+            bullet.dy = 2.0f;
+
             bullets.add(bullet);
         }
     }
@@ -264,11 +273,22 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         //batch.render(saber, environment);
         batch.render(scene, environment);
         for (int i = 0; i < bullets.size(); i++){
-            batch.render(bullets.get(i), environment);
+            batch.render(bullets.get(i).instance, environment);
         }
 
         batch.end();
 
+        String caption;
+        if (hp > 0){
+            caption = " HP " + hp;
+        }else {
+            caption = "You are lose";
+        }
+
+        label = new Label(caption, new Label.LabelStyle(font, Color.RED));
+
+        label.setPosition(Gdx.graphics.getWidth() / 2 - 3, Gdx.graphics.getHeight() / 2 - 9);
+        stage.addActor(label);
         stage.draw();
     }
 
