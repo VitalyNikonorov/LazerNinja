@@ -11,6 +11,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled = true
     }
     buildTypes {
         release {
@@ -34,10 +35,12 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'io.reactivex:rxkotlin:0.40.1'
 
+    compile 'com.android.support:multidex:1.0.0'
 
     compile 'com.github.yangweigbh:libgdx-cardboard-core:0.2'
     compile 'com.badlogicgames.gdx:gdx-backend-android:1.7.1'
     compile 'com.badlogicgames.gdx:gdx:1.7.1'
+    compile "com.badlogicgames.gdx:gdx-bullet:1.7.1"
 }
 
 tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->

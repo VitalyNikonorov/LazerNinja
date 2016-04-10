@@ -12,6 +12,7 @@ import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -24,15 +25,26 @@ import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.Bullet;
+import com.badlogic.gdx.physics.bullet.collision.CollisionObjectWrapper;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionAlgorithm;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
+import com.badlogic.gdx.physics.bullet.collision.btDispatcherInfo;
+import com.badlogic.gdx.physics.bullet.collision.btManifoldResult;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.Eye;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
 import net.nikonorov.lazerninja.App;
-import net.nikonorov.lazerninja.logic.Bullet;
+import net.nikonorov.lazerninja.logic.Lazer;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -52,13 +64,22 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 1000.0f;
     private static final float CAMERA_Z = 0;//.1f;
-    private ArrayList<Bullet> bullets = new ArrayList<>();
+    private ArrayList<Lazer> lazers = new ArrayList<>();
     private Model bulletModel;
     private Random random;
 
     private int hp = 20;
 
     private long lastTime = 0;
+
+    private btCollisionShape saberShape;
+    private btCollisionObject saberCollisionObject;
+    private btCollisionDispatcher dispatcher;
+    private btDefaultCollisionConfiguration collisionConfig;
+
+    static {
+        new SharedLibraryLoader().load("gdx-bullet");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +88,32 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         initialize(this, config);
     }
 
+    private boolean checkCollision(btCollisionObject obj0, btCollisionObject obj1) {
+        CollisionObjectWrapper co0 = new CollisionObjectWrapper(obj0);
+        CollisionObjectWrapper co1 = new CollisionObjectWrapper(obj1);
+
+        btCollisionAlgorithm algorithm = dispatcher.findAlgorithm(co0.wrapper, co1.wrapper);
+
+        btDispatcherInfo info = new btDispatcherInfo();
+        btManifoldResult result = new btManifoldResult(co0.wrapper, co1.wrapper);
+
+        algorithm.processCollision(co0.wrapper, co1.wrapper, info, result);
+
+        boolean r = result.getPersistentManifold().getNumContacts() > 0;
+
+        dispatcher.freeCollisionAlgorithm(algorithm.getCPointer());
+        result.dispose();
+        info.dispose();
+        co1.dispose();
+        co0.dispose();
+
+        return r;
+
+    }
+
     @Override
     public void create() {
+        Bullet.init();
         cam = new CardboardCamera();
         cam.position.set(0f, 3f, CAMERA_Z);
         cam.lookAt(0,3f,-5f);
@@ -150,11 +195,17 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
 
         Model trooperModel = modelLoader.loadModel(Gdx.files.internal("trooper/trooper.g3db"));
+        Model saberModel = modelLoader.loadModel(Gdx.files.internal("saber/saber.g3db"));
+        saber = new ModelInstance(saberModel);
 
-        saber = new ModelInstance(modelLoader.loadModel(Gdx.files.internal("saber/saber.g3db")));
+        saber.transform.scl(0.02f);
 
-        saber.transform.scl(0.2f);
 
+        Mesh saberMesh = saberModel.meshes.get(0);
+        saberShape = new btConvexHullShape(saberMesh.getVerticesBuffer(), saberMesh.getNumVertices(), saberMesh.getVertexSize());
+        saberCollisionObject = new btCollisionObject();
+        saberCollisionObject.setCollisionShape(saberShape);
+        saberCollisionObject.setWorldTransform(saber.transform);
 
 
         troopers[0] = new ModelInstance(trooperModel);
@@ -185,6 +236,8 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 //        Model bulletModel = modelBuilder.createCylinder(0.5f, 1f, 0.5f, 3, new Material(ColorAttribute.createDiffuse(Color.BLUE)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         bulletModel = loader.loadModel(Gdx.files.internal("lazer/sphere.obj"));
+        collisionConfig = new btDefaultCollisionConfiguration();
+        dispatcher = new btCollisionDispatcher(collisionConfig);
     }
 
     @Override
@@ -222,19 +275,28 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
 
         saber.transform.set(q);
+        saberCollisionObject.setWorldTransform(saber.transform);
 
         //Log.i("GAme", cam.toString());
         long curTime = System.currentTimeMillis();
 
-        for (int i = 0; i < bullets.size(); i++){
-            bullets.get(i).instance.transform.translate(bullets.get(i).dx, bullets.get(i).dz, bullets.get(i).dy);
+        for (int i = 0; i < lazers.size(); i++){
+            lazers.get(i).instance.transform.translate(lazers.get(i).dx, lazers.get(i).dz, lazers.get(i).dy);
+
+            lazers.get(i).collisionObject.setWorldTransform(lazers.get(i).instance.transform);
 
             Vector3 location = new Vector3();
-            bullets.get(i).instance.transform.getTranslation(location);
+            lazers.get(i).instance.transform.getTranslation(location);
             if (location.z > 0){
-                bullets.remove(i);
+                lazers.remove(i);
                 --hp;
             }
+
+            if (checkCollision(saberCollisionObject, lazers.get(i).collisionObject)) {
+                //lazers.remove(i);
+                lazers.get(i).dy = -2.0f;
+            }
+
         }
 
         if( curTime - lastTime > 3000 ){
@@ -243,13 +305,24 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             bulletInstance.transform.translate(0, 2.75f, -4);
             bulletInstance.transform.scl(0.05f);
 
-            Bullet bullet = new Bullet();
-            bullet.instance = bulletInstance;
-            bullet.dx = (float) (random.nextInt() % 100) / 1000;
-            bullet.dz = (float) (random.nextInt() % 100) / 1000;
-            bullet.dy = 2.0f;
+            Lazer lazer = new Lazer();
+            lazer.instance = bulletInstance;
+            lazer.dx = (float) (random.nextInt() % 100) / 1000;
+            lazer.dz = (float) (random.nextInt() % 100) / 1000;
+            lazer.dy = 2.0f;
 
-            bullets.add(bullet);
+            Mesh bulletMesh = bulletModel.meshes.get(0);
+            btCollisionShape bulletShape = new btConvexHullShape(bulletMesh.getVerticesBuffer(), bulletMesh.getNumVertices(), bulletMesh.getVertexSize());
+            btCollisionObject bulletCollisionObject = new btCollisionObject();
+
+            bulletCollisionObject.setCollisionShape(bulletShape);
+            bulletCollisionObject.setWorldTransform(lazer.instance.transform);
+
+            lazer.collisionObject = bulletCollisionObject;
+            lazer.collisionShape = bulletShape;
+
+            lazers.add(lazer);
+
         }
     }
 
@@ -270,10 +343,10 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             batch.render(troopers[i], environment);
         }
 
-        //batch.render(saber, environment);
+        batch.render(saber, environment);
         batch.render(scene, environment);
-        for (int i = 0; i < bullets.size(); i++){
-            batch.render(bullets.get(i).instance, environment);
+        for (int i = 0; i < lazers.size(); i++){
+            batch.render(lazers.get(i).instance, environment);
         }
 
         batch.end();
