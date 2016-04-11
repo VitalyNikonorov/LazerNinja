@@ -2,6 +2,7 @@ package net.nikonorov.lazerninja.ui
 
 import android.app.LoaderManager
 import android.content.Loader
+import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.EditText
@@ -38,17 +39,17 @@ class ActivityUserProfile: AppCompatActivity(), LoaderManager.LoaderCallbacks<Su
             loaderManager.initLoader(LOADER_LOGOUT, null, this@ActivityUserProfile)
         }
 
-        val pass1 = findViewById(R.id.new_pass_1) as EditText
-        val pass2 = findViewById(R.id.new_pass_2) as EditText
-
-        val changePassBtn = findViewById(R.id.change_pass_btn)
-
-        changePassBtn.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("pass1", pass1.text.toString())
-            bundle.putString("pass2", pass2.text.toString())
-            loaderManager.initLoader(LOADER_CHANGE_PASS, bundle, this@ActivityUserProfile)
-        }
+//        val pass1 = findViewById(R.id.new_pass_1) as EditText
+//        val pass2 = findViewById(R.id.new_pass_2) as EditText
+//
+//        val changePassBtn = findViewById(R.id.change_pass_btn)
+//
+//        changePassBtn.setOnClickListener {
+//            val bundle = Bundle()
+//            bundle.putString("pass1", pass1.text.toString())
+//            bundle.putString("pass2", pass2.text.toString())
+//            loaderManager.initLoader(LOADER_CHANGE_PASS, bundle, this@ActivityUserProfile)
+//        }
     }
 
     override fun onResume() {
@@ -60,10 +61,10 @@ class ActivityUserProfile: AppCompatActivity(), LoaderManager.LoaderCallbacks<Su
         val lastName = findViewById(R.id.profile_last_name) as TextView
 
 
-        username.text = App.profile.username
-        email.text = App.profile.email
-        firstName.text = App.profile.first_name
-        lastName.text = App.profile.last_name
+        username.text = "${resources.getString(R.string.username)} ${App.profile.username}"
+        email.text = "${resources.getString(R.string.email)} ${App.profile.email}"
+        firstName.text = "${resources.getString(R.string.first_name)} ${App.profile.first_name}"
+        lastName.text = "${resources.getString(R.string.last_name)} ${App.profile.last_name}"
     }
 
     override fun onCreateLoader(id: Int, bundle: Bundle?): Loader<SuccessResponse>? {

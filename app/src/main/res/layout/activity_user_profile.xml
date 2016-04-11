@@ -1,88 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
 
-    <TextView
-        android:id="@+id/username_caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/username"/>
+    <RelativeLayout
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/profile_username"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/username_caption"/>
-
-    <TextView
-        android:id="@+id/email_caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/email"
-        android:layout_below="@+id/username_caption"/>
+        android:text="@string/username" />
 
     <TextView
         android:id="@+id/profile_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/username_caption"
-        android:layout_toRightOf="@+id/email_caption"/>
-
-    <TextView
-        android:id="@+id/first_name_caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/first_name"
-        android:layout_below="@+id/email_caption"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:text="@string/email"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/profile_username" />
 
     <TextView
         android:id="@+id/profile_first_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/email_caption"
-        android:layout_toRightOf="@+id/first_name_caption"/>
-
-    <TextView
-        android:id="@+id/last_name_caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/last_name"
-        android:layout_below="@+id/first_name_caption"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:text="@string/first_name"
+        android:layout_below="@+id/profile_email" />
 
     <TextView
         android:id="@+id/profile_last_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/last_name_caption"
-        android:layout_below="@+id/first_name_caption"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:text="@string/last_name"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/profile_first_name"/>
 
     <Button
         android:id="@+id/logout_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/last_name_caption"
+        android:layout_below="@+id/profile_last_name"
         android:text="@string/logout"
         />
 
-    <EditText
-        android:id="@+id/new_pass_1"
-        android:layout_below="@+id/logout_btn"
-        android:hint="new pass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!--<EditText-->
+        <!--android:id="@+id/new_pass_1"-->
+        <!--android:layout_below="@+id/logout_btn"-->
+        <!--android:hint="new pass"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
-    <EditText
-        android:id="@+id/new_pass_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="confirm new pass"
-        android:layout_below="@+id/new_pass_1"/>
+    <!--<EditText-->
+        <!--android:id="@+id/new_pass_2"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="confirm new pass"-->
+        <!--android:layout_below="@+id/new_pass_1"/>-->
 
-    <Button
-        android:id="@+id/change_pass_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="changsepass"
-        android:layout_below="@+id/new_pass_2"/>
+    <!--<Button-->
+        <!--android:id="@+id/change_pass_btn"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="changsepass"-->
+        <!--android:layout_below="@+id/new_pass_2"/>-->
+        </RelativeLayout>
 
 </RelativeLayout>
