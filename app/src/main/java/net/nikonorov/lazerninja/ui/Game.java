@@ -307,6 +307,8 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             if (location.z > 0){
                 lazers.remove(i);
                 --hp;
+            } else if (location.z < -10){
+                lazers.remove(i);
             }
 
         }
@@ -370,6 +372,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             caption = "You are lose";
         }
 
+        stage.clear();
         label = new Label(caption, new Label.LabelStyle(font, Color.CYAN));
 
         label.setPosition(Gdx.graphics.getWidth() / 2 - 3, Gdx.graphics.getHeight() / 2 - 9);
