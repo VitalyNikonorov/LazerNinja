@@ -2,6 +2,7 @@ package net.nikonorov.lazerninja.logic
 
 import android.content.Context
 import android.content.Loader
+import android.widget.Toast
 import net.nikonorov.lazerninja.App
 import net.nikonorov.lazerninja.UserProfile
 import net.nikonorov.lazerninja.logic.api.TextResponse
@@ -51,8 +52,11 @@ class LoaderUserProfile: Loader<UserProfile>{
         call.enqueue(object : Callback<UserProfile> {
             override fun onResponse(p0: Call<UserProfile>?, response: Response<UserProfile>?) {
                 if(response != null) {
-                    //val error = response.errorBody().string() //TODO
-                    deliverResult(response.body())
+                    if(response.errorBody() != null){
+                        Toast.makeText(context, "Ошибка авторизации", Toast.LENGTH_SHORT).show()
+                    }else if (response.body() != null) {
+                        deliverResult(response.body())
+                    }
                 }
             }
 

@@ -195,18 +195,21 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
 
         Model trooperModel = modelLoader.loadModel(Gdx.files.internal("trooper/trooper.g3db"));
+
+        ///////Saber
+
         Model saberModel = modelLoader.loadModel(Gdx.files.internal("ssaber/saber.g3db"));
         saber = new ModelInstance(saberModel);
-
-        saber.transform.translate(-1.0f, 0, 0);
-        //saber.transform.scl(0.02f);
-
-
         Mesh saberMesh = saberModel.meshes.get(0);
         saberShape = new btConvexHullShape(saberMesh.getVerticesBuffer(), saberMesh.getNumVertices(), saberMesh.getVertexSize());
         saberCollisionObject = new btCollisionObject();
+
         saberCollisionObject.setCollisionShape(saberShape);
+
+        saber.transform.translate(0, 0, -2.0f);
         saberCollisionObject.setWorldTransform(saber.transform);
+        ///////////////
+
 
 
         troopers[0] = new ModelInstance(trooperModel);
@@ -276,7 +279,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         saber.transform.set(q);
         saberCollisionObject.setWorldTransform(saber.transform);
 
-        //Log.i("GAme", cam.toString());
         long curTime = System.currentTimeMillis();
 
         for (int i = 0; i < lazers.size(); i++){
@@ -288,7 +290,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             lazers.get(i).instance.transform.getTranslation(location);
 
             if (checkCollision(saberCollisionObject, lazers.get(i).collisionObject)) {
-                //lazers.remove(i);
                 lazers.get(i).dy = -2.0f;
                 lazers.get(i).dx -= lazers.get(i).dx;
                 lazers.get(i).dz -= lazers.get(i).dz;

@@ -90,7 +90,7 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : A
 
                     (activity.application as App).quaternion = tempQuaternion
 
-                    activity.infoTV?.post(Runnable { activity.infoTV?.text = temp })
+                    activity.infoTV?.post(Runnable { activity.infoTV?.text = "Соединение установлено" })
 
                     sb.setLength(0)
 

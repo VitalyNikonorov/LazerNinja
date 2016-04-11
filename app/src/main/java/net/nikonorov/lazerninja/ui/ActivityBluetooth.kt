@@ -139,11 +139,6 @@ class ActivityBluetooth : AppCompatActivity() {
             }
         }
 
-        val sendBtn = findViewById(R.id.send_btn)
-        sendBtn.setOnClickListener {
-            client?.send("1")
-        }
-
         infoTV = findViewById(R.id.info_tv) as TextView
 
 
