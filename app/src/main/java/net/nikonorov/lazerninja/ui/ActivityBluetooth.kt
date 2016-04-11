@@ -1,6 +1,8 @@
 package net.nikonorov.lazerninja.ui
 
 import android.Manifest
+import android.app.Dialog
+import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.*
@@ -38,11 +40,15 @@ class ActivityBluetooth : AppCompatActivity() {
 
     var infoTV : TextView? = null
 
+    var dialog : ProgressDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_bluetooth)
 
+        dialog = ProgressDialog(this)
+        dialog?.setTitle("Поиск устройств")
+        dialog?.setMessage("Идет поиск устройств")
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (mBluetoothAdapter == null) {
@@ -80,9 +86,9 @@ class ActivityBluetooth : AppCompatActivity() {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
 
-
         discoverBtn.setOnClickListener {
 
+            dialog?.show()
 
             val hasLocationPermission = ContextCompat.checkSelfPermission(this@ActivityBluetooth,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -157,6 +163,10 @@ class ActivityBluetooth : AppCompatActivity() {
                 devices.add(device)
                 adapter?.notifyDataSetChanged()
 
+                //text?.text = "name: ${device.name}, adress: ${device.address}"
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                dialog?.dismiss()
                 //text?.text = "name: ${device.name}, adress: ${device.address}"
             }
         }
