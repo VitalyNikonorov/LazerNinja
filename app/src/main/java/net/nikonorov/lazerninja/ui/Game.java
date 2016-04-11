@@ -45,6 +45,7 @@ import com.google.vrtoolkit.cardboard.Viewport;
 
 import net.nikonorov.lazerninja.App;
 import net.nikonorov.lazerninja.logic.Lazer;
+import net.nikonorov.lazerninja.logic.Saber;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -54,7 +55,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
     private CardboardCamera cam;
     private ModelInstance[] troopers = new ModelInstance[4];
-    private ModelInstance saber;
+    private Saber saber;
     private ModelInstance scene;
     private ModelBatch batch;
     private Stage stage;
@@ -72,8 +73,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
     private long lastTime = 0;
 
-    private btCollisionShape saberShape;
-    private btCollisionObject saberCollisionObject;
     private btCollisionDispatcher dispatcher;
     private btDefaultCollisionConfiguration collisionConfig;
 
@@ -201,15 +200,17 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         ///////Saber
 
         Model saberModel = modelLoader.loadModel(Gdx.files.internal("ssaber/saber.g3db"));
-        saber = new ModelInstance(saberModel);
+        saber = new Saber();
+        saber.instance = new ModelInstance(saberModel);
+
         Mesh saberMesh = saberModel.meshes.get(0);
-        saberShape = new btConvexHullShape(saberMesh.getVerticesBuffer(), saberMesh.getNumVertices(), saberMesh.getVertexSize());
-        saberCollisionObject = new btCollisionObject();
+        saber.collisionShape = new btConvexHullShape(saberMesh.getVerticesBuffer(), saberMesh.getNumVertices(), saberMesh.getVertexSize());
+        saber.collisionObject = new btCollisionObject();
 
-        saberCollisionObject.setCollisionShape(saberShape);
+        saber.collisionObject.setCollisionShape(saber.collisionShape);
 
-        saber.transform.translate(0, 0, -2.0f);
-        saberCollisionObject.setWorldTransform(saber.transform);
+        saber.instance.transform.translate(0, 0, -2.0f);
+        saber.collisionObject.setWorldTransform(saber.instance.transform);
         ///////////////
 
 
@@ -284,8 +285,8 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
 
-        saber.transform.set(q);
-        saberCollisionObject.setWorldTransform(saber.transform);
+        saber.instance.transform.set(q);
+        saber.collisionObject.setWorldTransform(saber.instance.transform);
 
         long curTime = System.currentTimeMillis();
 
@@ -297,7 +298,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             Vector3 location = new Vector3();
             lazers.get(i).instance.transform.getTranslation(location);
 
-            if (checkCollision(saberCollisionObject, lazers.get(i).collisionObject)) {
+            if (checkCollision(saber.collisionObject, lazers.get(i).collisionObject)) {
                 lazers.get(i).dy = -2.0f;
                 lazers.get(i).dx -= lazers.get(i).dx;
                 lazers.get(i).dz -= lazers.get(i).dz;
@@ -354,7 +355,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             batch.render(troopers[i], environment);
         }
 
-        batch.render(saber, environment);
+        batch.render(saber.instance, environment);
         batch.render(scene, environment);
         for (int i = 0; i < lazers.size(); i++){
             batch.render(lazers.get(i).instance, environment);
@@ -369,7 +370,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             caption = "You are lose";
         }
 
-        label = new Label(caption, new Label.LabelStyle(font, Color.RED));
+        label = new Label(caption, new Label.LabelStyle(font, Color.CYAN));
 
         label.setPosition(Gdx.graphics.getWidth() / 2 - 3, Gdx.graphics.getHeight() / 2 - 9);
         stage.addActor(label);
