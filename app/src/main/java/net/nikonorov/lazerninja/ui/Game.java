@@ -194,7 +194,9 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 //        scene.transform.scl(0.002f);
 
 
-        Model trooperModel = modelLoader.loadModel(Gdx.files.internal("trooper/trooper.g3db"));
+        Model trooperModel = modelLoader.loadModel(Gdx.files.internal("storm/trooper.g3db"));
+//        Model trooperModel = loader.loadModel(Gdx.files.internal("storm/sittedtrooper.obj"));
+
 
         ///////Saber
 
@@ -214,22 +216,28 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         troopers[0] = new ModelInstance(trooperModel);
         troopers[0].transform.translate(0, 0, -5);
-        troopers[0].transform.scl(0.01f);
+//        troopers[0].transform.setToRotation(1, 0, 1, -90);
+
+//        troopers[0].transform.scl(0.01f);
+//        troopers[0].transform.scl(0.1f);
 
 
 
         troopers[1] = new ModelInstance(trooperModel);
         troopers[1].transform.translate(0, 0, 5);
-        troopers[1].transform.scl(0.01f);
+//        troopers[0].transform.rotate(0, 0, 1, 90);
+//        troopers[1].transform.scl(0.01f);
 
         troopers[2] = new ModelInstance(trooperModel);
         troopers[2].transform.translate(-5, 0, 0);
-        troopers[2].transform.scl(0.01f);
+//        troopers[0].transform.rotate(0, 0, 1, -90);
+//        troopers[2].transform.scl(2f);
 
 
         troopers[3] = new ModelInstance(trooperModel);
         troopers[3].transform.translate(5, 0, 0);
-        troopers[3].transform.scl(0.01f);
+//        troopers[0].transform.rotate(1, 0, 0, -90);
+//        troopers[3].transform.scl(10.f);
 
         stage = new Stage();
         font = new BitmapFont();
@@ -268,11 +276,11 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     @Override
     public void onNewFrame(HeadTransform paramHeadTransform) {
 
-        for (int i = 0; i < 4; i++){
-            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
-
-            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
-        }
+//        for (int i = 0; i < 4; i++){
+//            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
+//
+//            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
+//        }
 
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
 
@@ -305,12 +313,12 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         if( curTime - lastTime > 3000 ){
             lastTime = curTime;
             ModelInstance bulletInstance = new ModelInstance(bulletModel);
-            bulletInstance.transform.translate(0, 2.75f, -4);
+            bulletInstance.transform.translate(-0.25f, 2.5f, -4);
             bulletInstance.transform.scl(0.05f);
 
             Lazer lazer = new Lazer();
             lazer.instance = bulletInstance;
-            lazer.dx = (float) (random.nextInt() % 100) / 1000;
+            lazer.dx = (float) (random.nextInt() % 100) / 1000 + 0.15f;
             lazer.dz = (float) (random.nextInt() % 100) / 1000;
             lazer.dy = 2.0f;
 
