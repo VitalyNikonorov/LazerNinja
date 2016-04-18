@@ -202,6 +202,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         Model saberModel = modelLoader.loadModel(Gdx.files.internal("ssaber/saber.g3db"));
         saber = new Saber();
         saber.instance = new ModelInstance(saberModel);
+        saber.instance.transform.translate(2, 1, -2);
 
         Mesh saberMesh = saberModel.meshes.get(0);
         saber.collisionShape = new btConvexHullShape(saberMesh.getVerticesBuffer(), saberMesh.getNumVertices(), saberMesh.getVertexSize());
@@ -209,7 +210,6 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         saber.collisionObject.setCollisionShape(saber.collisionShape);
 
-        saber.instance.transform.translate(0, 0, -2.0f);
         saber.collisionObject.setWorldTransform(saber.instance.transform);
         ///////////////
 

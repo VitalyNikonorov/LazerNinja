@@ -21,6 +21,7 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+//        jniLibs.srcDir 'scr/main/libs'
     }
 }
 
@@ -43,10 +44,10 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-bullet:1.7.1"
 }
 
-tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
-    pkgTask.jniFolders = new HashSet<File>()
-    pkgTask.jniFolders.add(new File(projectDir, 'libs'))
-}
+//tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
+//    pkgTask.jniFolders = new HashSet<File>()
+//    pkgTask.jniFolders.add(new File(projectDir, 'libs'))
+//}
 
 buildscript {
     ext.kotlin_version = '1.0.0'
