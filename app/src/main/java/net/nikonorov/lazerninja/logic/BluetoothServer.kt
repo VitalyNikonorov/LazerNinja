@@ -84,9 +84,14 @@ class BluetoothServer(val mBluetoothAdapter : BluetoothAdapter, val activity : A
                 val begin = temp.indexOf('{')
 
                 if( end != -1 && begin != -1 && begin < end ){
+                    Log.i("temp", temp)
                     val json = JSONObject(temp);
 
-                    val tempQuaternion = Quaternion(json.getDouble("x").toFloat(), json.getDouble("y").toFloat(), json.getDouble("z").toFloat(), json.getDouble("w").toFloat())
+//                    val tempQuaternion = Quaternion(json.getDouble("x").toFloat(), json.getDouble("y").toFloat(), json.getDouble("z").toFloat(), json.getDouble("w").toFloat())
+
+                    val tempQuaternion = Quaternion()
+
+                    tempQuaternion.setEulerAngles(0f, json.getDouble("x").toFloat(), json.getDouble("y").toFloat())
 
                     (activity.application as App).quaternion = tempQuaternion
 

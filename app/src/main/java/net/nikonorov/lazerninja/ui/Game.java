@@ -305,21 +305,23 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     @Override
     public void onNewFrame(HeadTransform paramHeadTransform) {
 
-//        for (int i = 0; i < 4; i++){
-//            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
-//
-//            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
-//        }
-
-//        testInstance.transform.translate(-0.25f, 0.5f, -1);
-
         paramHeadTransform.getForwardVector(forward, 0);
 
 
         Vector3 saberVectorPosition = new Vector3(new float[]{0, 1.7f, -0.5f});
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
 
-        saber.instance.transform.set(saberVectorPosition, q);//, saberVectorScl);
+        float pitch = q.getPitch();
+        float roll = q.getRoll();
+        float yaw = q.getYaw();
+
+//        q = new Quaternion();
+//        q.setEulerAngles(pitch, roll-90.0f, yaw);
+
+//        saber.instance.transform.rotate(q);
+
+        saber.instance.transform.set(saberVectorPosition, q);
+
         saber.collisionObject.setWorldTransform(saber.instance.transform);
 
         Vector3 mVector = new Vector3(forward);

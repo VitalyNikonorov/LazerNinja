@@ -22,6 +22,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".ui.ActivitySplash" android:theme="@style/ActivitySplash"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -37,12 +38,15 @@
         </activity>
 
         <activity android:name=".ui.ActivityMain"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.ActivitySign" android:theme="@style/Sign"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.ActivityUserProfile"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.ActivitySaber"
@@ -50,6 +54,7 @@
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.ActivityBluetooth"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
 
     </application>

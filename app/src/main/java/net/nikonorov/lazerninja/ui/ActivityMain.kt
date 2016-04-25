@@ -105,7 +105,7 @@ class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProf
     }
 
     override fun onLoaderReset(p0: Loader<UserProfile>?) {
-        throw UnsupportedOperationException()
+        //throw UnsupportedOperationException()
     }
 
     override fun onLoadFinished(p0: Loader<UserProfile>?, response: UserProfile?) {

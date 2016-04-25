@@ -29,6 +29,11 @@ class ActivitySaber: Activity(), SensorEventListener{
     var magnetData : FloatArray? = null       //Данные геомагнитного датчика
     var orientationData  = FloatArray(3) //Матрица положения в пространстве
 
+    var gravity  = FloatArray(3) //Матрица положения в пространстве
+
+    var lastAlpha : Double = 0.0
+    var lastBetta : Double = 0.0
+
     ///////
 
     var isWork = false
@@ -65,13 +70,13 @@ class ActivitySaber: Activity(), SensorEventListener{
 //                mSensorManager?.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
 //                SensorManager.SENSOR_DELAY_FASTEST);
 //
-//        mSensorManager?.registerListener(this,
-//                mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-//                SensorManager.SENSOR_DELAY_FASTEST);
-
         mSensorManager?.registerListener(this,
-                mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
+                mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_GAME);
+
+//        mSensorManager?.registerListener(this,
+//                mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
+//                SensorManager.SENSOR_DELAY_GAME);
 
         saber.setOnClickListener {
             isWork = !isWork
@@ -108,6 +113,80 @@ class ActivitySaber: Activity(), SensorEventListener{
                 val msg = "{\"x\":  ${quaternions[0]}, \"y\": ${quaternions[1]}, \"z\": ${quaternions[2]}, \"w\": ${quaternions[3]}}"
 
                 (application as App).client?.send(msg)
+
+            } else {
+
+                if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+
+                    var x = event!!.values[0]
+                    var y = event!!.values[1]
+                    var z = event!!.values[2]
+
+
+                    if (x == 0.0f){
+                        x = 0.0000000001f
+                    }
+
+                    if (y == 0.0f){
+                        y = 0.0000000001f
+                    }
+
+                    if (z == 0.0f){
+                        z = 0.0000000001f
+                    }
+
+                    var alpha = Math.abs(Math.acos(y / Math.sqrt( (y * y + x * x).toDouble() )) / Math.PI * 180)
+
+                    if (x < 0.0){
+                        alpha *= -1
+                    }
+
+                    if (alpha.isNaN()){
+                        Log.i("nan", "$alpha")
+                        alpha = 0.0
+                    }
+
+                    var alphaForSend = 0.0
+
+                    if (Math.abs(alpha - lastAlpha) < 4.0) {
+                        alphaForSend = lastAlpha
+                    } else {
+                        alphaForSend = alpha
+                    }
+
+
+                    var betta = Math.abs(Math.acos(y / Math.sqrt( (y * y + z * z).toDouble() )) / Math.PI * 180)
+
+                    if (z > 0.0){
+                        betta *= -1
+                    }
+
+                    if (betta.isNaN()){
+                        Log.i("nan", "$betta")
+                        betta = 0.0
+                    }
+
+                    var bettaForSend = 0.0
+
+                    if (Math.abs(betta - lastBetta) < 4.0) {
+                        bettaForSend = lastBetta
+                    } else {
+                        bettaForSend = betta
+                    }
+
+                    Log.i("orientation: ", "alpha: $alpha betta: $betta")
+
+                    val msg = "{\"x\":  $bettaForSend, \"y\": $alphaForSend}"
+
+                    (application as App).client?.send(msg)
+
+                    lastAlpha = alpha
+                    lastBetta = betta
+
+
+                }
+
+
             }
             //        else {
             //            loadNewSensorData(event); // Получаем данные с датчика

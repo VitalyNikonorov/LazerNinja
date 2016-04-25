@@ -1,6 +1,7 @@
 package net.nikonorov.lazerninja.ui
 
 import android.app.LoaderManager
+import android.content.Intent
 import android.content.Loader
 import android.content.res.Resources
 import android.os.Bundle
@@ -90,6 +91,7 @@ class ActivityUserProfile: AppCompatActivity(), LoaderManager.LoaderCallbacks<Su
 
     override fun onLoadFinished(p0: Loader<SuccessResponse>?, response: SuccessResponse?) {
         Toast.makeText(this@ActivityUserProfile, response?.success, Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this@ActivityUserProfile, ActivityMain::class.java));
     }
 
 }
