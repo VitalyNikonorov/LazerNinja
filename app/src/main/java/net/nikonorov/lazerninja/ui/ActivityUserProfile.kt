@@ -35,7 +35,7 @@ class ActivityUserProfile: AppCompatActivity(), LoaderManager.LoaderCallbacks<Su
 
         val logoutBtn = findViewById(R.id.logout_btn)
 
-        logoutBtn.setOnClickListener {
+        logoutBtn?.setOnClickListener {
             loaderManager.initLoader(LOADER_LOGOUT, null, this@ActivityUserProfile)
         }
 

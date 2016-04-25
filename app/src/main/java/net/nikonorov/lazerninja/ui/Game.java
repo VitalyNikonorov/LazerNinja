@@ -3,7 +3,14 @@ package net.nikonorov.lazerninja.ui;
 /**
  * Created by vitaly on 20.03.16.
  */
+import android.content.Context;
+import android.opengl.Matrix;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -44,6 +51,7 @@ import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
 import net.nikonorov.lazerninja.App;
+import net.nikonorov.lazerninja.R;
 import net.nikonorov.lazerninja.logic.Lazer;
 import net.nikonorov.lazerninja.logic.Saber;
 
@@ -52,6 +60,13 @@ import java.util.Random;
 
 
 public class Game extends CardBoardAndroidApplication implements CardBoardApplicationListener{
+
+    private static final float YAW_LIMIT = 0.12f;
+    private static final float PITCH_LIMIT = 0.12f;
+
+
+    private ModelInstance testInstance;
+    private float[] forward;
 
     private CardboardCamera cam;
     private ModelInstance[] troopers = new ModelInstance[4];
@@ -199,7 +214,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 
         ///////Saber
 
-        Model saberModel = modelLoader.loadModel(Gdx.files.internal("ssaber/saber.g3db"));
+        Model saberModel = modelLoader.loadModel(Gdx.files.internal("lastsaber/saber.g3db"));
         saber = new Saber();
         saber.instance = new ModelInstance(saberModel);
         saber.instance.transform.translate(2, 1, -2);
@@ -243,12 +258,25 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         stage = new Stage();
         font = new BitmapFont();
 
+
 //        ModelBuilder modelBuilder = new ModelBuilder();
 //        Model bulletModel = modelBuilder.createCylinder(0.5f, 1f, 0.5f, 3, new Material(ColorAttribute.createDiffuse(Color.BLUE)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         bulletModel = loader.loadModel(Gdx.files.internal("lazer/sphere.obj"));
         collisionConfig = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfig);
+
+
+
+
+        //////
+
+        forward = new float[3];
+
+        testInstance = new ModelInstance(bulletModel);
+
+        testInstance.transform.translate(-0.25f, 0.5f, -1);
+        testInstance.transform.scl(0.05f);
     }
 
     @Override
@@ -283,10 +311,20 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
 //            troopers[i].transform.rotate(0, 1, 0, Gdx.graphics.getDeltaTime() * 30);
 //        }
 
+//        testInstance.transform.translate(-0.25f, 0.5f, -1);
+
+        paramHeadTransform.getForwardVector(forward, 0);
+
+
+        Vector3 saberVectorPosition = new Vector3(new float[]{0, 1.7f, -0.5f});
         Quaternion q = new Quaternion(((App)getApplication()).getQuaternion());
 
-        saber.instance.transform.set(q);
+        saber.instance.transform.set(saberVectorPosition, q);//, saberVectorScl);
         saber.collisionObject.setWorldTransform(saber.instance.transform);
+
+        Vector3 mVector = new Vector3(forward);
+
+        testInstance.transform.set(mVector, q);
 
         long curTime = System.currentTimeMillis();
 
@@ -338,6 +376,14 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
             lazers.add(lazer);
 
         }
+
+
+        if(isLookingAtObject(paramHeadTransform, saber.instance.transform.getValues())){
+            Log.i("Look", "Yes");
+        } else {
+            Log.i("Look", "No");
+        }
+
     }
 
     @Override
@@ -358,6 +404,7 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
         }
 
         batch.render(saber.instance, environment);
+//        batch.render(testInstance, environment);
         batch.render(scene, environment);
         for (int i = 0; i < lazers.size(); i++){
             batch.render(lazers.get(i).instance, environment);
@@ -394,4 +441,24 @@ public class Game extends CardBoardAndroidApplication implements CardBoardApplic
     public void onCardboardTrigger() {
 
     }
+
+
+    private boolean isLookingAtObject(HeadTransform paramHeadTransform, float[] model) {
+        float[] initVec = {0, 0, 0, 1.0f};
+        float[] objPositionVec = new float[4];
+        float[] modelView = new float[16];
+        float[] headView = new float[16];
+
+        paramHeadTransform.getHeadView(headView, 0);
+
+        // Convert object space to camera space. Use the headView from onNewFrame.
+        Matrix.multiplyMM(modelView, 0, headView, 0, model, 0);  // multiply  4x4 modelView matrix and  4x4 modelCube matrix and store in headView matrix, ints 0 0 0 - offsets
+        Matrix.multiplyMV(objPositionVec, 0, modelView, 0, initVec, 0); //Multiplies a 4 element vector by a 4x4 matrix and stores the result in a 4-element column vector -  objPositionVec result vector
+
+        float pitch = (float) Math.atan2(objPositionVec[1], -objPositionVec[2]);
+        float yaw = (float) Math.atan2(objPositionVec[0], -objPositionVec[2]);
+
+        return Math.abs(yaw) < YAW_LIMIT;
+    }
+
 }

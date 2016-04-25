@@ -72,7 +72,7 @@ class ActivityBluetooth : AppCompatActivity() {
 
         val visibleBtn = findViewById(R.id.visible_btn)
 
-        visibleBtn.setOnClickListener {
+        visibleBtn?.setOnClickListener {
             val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
             startActivity(discoverableIntent)
@@ -86,7 +86,7 @@ class ActivityBluetooth : AppCompatActivity() {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
 
-        discoverBtn.setOnClickListener {
+        discoverBtn?.setOnClickListener {
 
             dialog?.show()
 
@@ -121,7 +121,7 @@ class ActivityBluetooth : AppCompatActivity() {
         registerReceiver(mReceiver, filter)
 
         val hostBtn = findViewById(R.id.host_btn)
-        hostBtn.setOnClickListener {
+        hostBtn?.setOnClickListener {
             val host = BluetoothServer(mBluetoothAdapter as BluetoothAdapter, this@ActivityBluetooth)
             host.acceptThread()
             host.start()
@@ -134,7 +134,7 @@ class ActivityBluetooth : AppCompatActivity() {
         adapter = RVAdapter(this@ActivityBluetooth, devices)
         rv.adapter = adapter
 
-        joinBtn.setOnClickListener {
+        joinBtn?.setOnClickListener {
             client = BluetoothClient(this@ActivityBluetooth)
 
             (application as App).client = client

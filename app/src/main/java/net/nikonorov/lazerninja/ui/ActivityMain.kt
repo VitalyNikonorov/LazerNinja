@@ -36,31 +36,31 @@ class ActivityMain : AppCompatActivity(), LoaderManager.LoaderCallbacks<UserProf
 
         val button = findViewById(R.id.auth_btn)
 
-        button.setOnClickListener {
+        button?.setOnClickListener {
             val intent = Intent(this@ActivityMain, ActivitySign::class.java)
             startActivity(intent)
         }
 
         val profile = findViewById(R.id.profile_btn)
-        profile.setOnClickListener {
+        profile?.setOnClickListener {
             loaderManager.initLoader(LOADER_ID, null, this@ActivityMain)
         }
 
         val gyroBtn = findViewById(R.id.gyro)
 
-        gyroBtn.setOnClickListener {
+        gyroBtn?.setOnClickListener {
             startActivity(Intent(this@ActivityMain, ActivitySaber::class.java))
         }
 
         val gameBtn = findViewById(R.id.game_btn)
 
-        gameBtn.setOnClickListener {
+        gameBtn?.setOnClickListener {
             startActivity(Intent(this@ActivityMain, Game::class.java))
         }
 
         val bluetoothBtn = findViewById(R.id.bluetooth_btn)
 
-        bluetoothBtn.setOnClickListener {
+        bluetoothBtn?.setOnClickListener {
             startActivity(Intent(this@ActivityMain, ActivityBluetooth::class.java))
         }
 
